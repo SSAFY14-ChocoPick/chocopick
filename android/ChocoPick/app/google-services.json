@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "465378831070",
+    "project_id": "chocopick-b0c91",
+    "storage_bucket": "chocopick-b0c91.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:465378831070:android:5292b64a891450f19c704f",
+        "android_client_info": {
+          "package_name": "com.ssafy.chocopick"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHtNhS5SxjEh2_zVif9HWfqEtRE3_UeSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

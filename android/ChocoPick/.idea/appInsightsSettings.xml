@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.ssafy.chocopick" />
+                  <option name="mobileSdkAppId" value="1:465378831070:android:5292b64a891450f19c704f" />
+                  <option name="projectId" value="chocopick-b0c91" />
+                  <option name="projectNumber" value="465378831070" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

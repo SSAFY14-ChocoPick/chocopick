@@ -48,6 +48,7 @@ dependencies {
     implementation("com.google.firebase:firebase-messaging")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
     implementation("androidx.fragment:fragment-ktx:1.8.5")
+    implementation("com.google.firebase:firebase-database")
 
     // ViewModelScope 제공 (viewModelScope)
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
@@ -57,6 +58,8 @@ dependencies {
 
     // ViewModel scope에 코루틴 쓰려고 (이미 있으면 생략)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
+    implementation("com.github.bumptech.glide:glide:5.0.5")
 
 
 

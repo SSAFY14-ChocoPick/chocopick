@@ -5,10 +5,16 @@
     android:layout_height="match_parent"
     tools:context=".ui.order.OrderFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvProducts"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="OrderFragment" />
+        android:layout_height="match_parent"/>
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
 
 </FrameLayout>

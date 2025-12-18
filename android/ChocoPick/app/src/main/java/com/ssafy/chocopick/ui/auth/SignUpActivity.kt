@@ -29,7 +29,8 @@ class SignUpActivity : AppCompatActivity() {
         binding.btnSignUp.setOnClickListener {
             val email = binding.etEmail.text?.toString().orEmpty()
             val pw = binding.etPassword.text?.toString().orEmpty()
-            authViewModel.signUp(email, pw)
+            val nickname = binding.etNickname.text?.toString().orEmpty()
+            authViewModel.signUp(email, pw, nickname)
         }
 
         binding.btnBackToLogin.setOnClickListener {

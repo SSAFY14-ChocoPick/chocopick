@@ -29,7 +29,7 @@ class AuthViewModel(
         }
     }
 
-    fun signUp(email: String, password: String) {
+    fun signUp(email: String, password: String, nickname: String) {
         if (email.isBlank() || password.isBlank()) {
             _authState.value = UiState.Error("이메일/비밀번호를 입력해주세요.")
             return
@@ -38,10 +38,14 @@ class AuthViewModel(
             _authState.value = UiState.Error("비밀번호는 6자 이상이어야 합니다.")
             return
         }
+        if (nickname.length > 10) {
+            _authState.value = UiState.Error("닉네임은 10자 이하이어야 합니다.")
+            return
+        }
 
         _authState.value = UiState.Loading
         viewModelScope.launch {
-            runCatching { authRepository.signUp(email.trim(), password) }
+            runCatching { authRepository.signUp(email.trim(), password, nickname) }
                 .onSuccess { uid -> _authState.value = UiState.Success(uid) }
                 .onFailure { e -> _authState.value = UiState.Error(e.message ?: "회원가입 실패", e) }
         }

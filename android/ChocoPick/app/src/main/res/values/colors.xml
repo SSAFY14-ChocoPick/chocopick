@@ -1,5 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- Brand -->
+    <color name="choco_primary">#F26A3D</color>   <!-- logo orange -->
+    <color name="choco_secondary">#FF8A65</color> <!-- soft coral -->
+    <color name="choco_accent">#D84315</color>    <!-- warm red (danger/alert) -->
+
+    <!-- Text -->
+    <color name="text_primary">#0B1D3A</color>    <!-- logo navy -->
+    <color name="text_secondary">#5D4037</color>  <!-- brown -->
+
+    <!-- Background -->
+    <color name="bg_main">#FFFDF8</color>         <!-- cream -->
+    <color name="bg_surface">#FFFFFF</color>
+
+    <!-- UI -->
+    <color name="divider">#E0E0E0</color>
+    <color name="disabled">#CCCCCC</color>
 </resources>

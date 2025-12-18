@@ -46,6 +46,18 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-messaging")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
+    implementation("androidx.fragment:fragment-ktx:1.8.5")
+
+    // ViewModelScope 제공 (viewModelScope)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
+
+    // repeatOnLifecycle / lifecycleScope 등 (UI에서 Flow collect 안정적으로)
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
+
+    // ViewModel scope에 코루틴 쓰려고 (이미 있으면 생략)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
 
 
     implementation(libs.androidx.core.ktx)

@@ -1,0 +1,175 @@
+{
+  "products": {
+    "choc_lotte_abc_565": {
+      "name": "롯데 ABC초코렛 565G",
+      "price": 13990,
+      "weight": "565g",
+      "type": "캔디, 초콜릿류",
+      "manufacturer": "롯데웰푸드(주)",
+      "origin": "대한민국",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/chocopick-b0c91.firebasestorage.app/o/product_image%2F1.jpeg?alt=media&token=5f68e8bd-05c6-4e25-a8e8-725efb55547b"
+    },
+    "choc_kinder_t4_50": {
+      "name": "매일 킨더 초콜릿 T-4 50G",
+      "price": 2100,
+      "weight": "50g",
+      "type": "준초콜릿",
+      "manufacturer": "Ferrero",
+      "origin": "중국",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/chocopick-b0c91.firebasestorage.app/o/product_image%2F2.jpeg?alt=media&token=6e805a05-3153-4103-bc24-e60e15fbbcf7"
+    },
+    "choc_ferrero_rocher_t8_heart": {
+      "name": "매일 페레로로쉐 T8 하트 100G",
+      "price": 8640,
+      "weight": "100g",
+      "type": "초콜릿가공품",
+      "manufacturer": "Ferrero",
+      "origin": "중국",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/chocopick-b0c91.firebasestorage.app/o/product_image%2F3.jpeg?alt=media&token=2e47ac9d-f1f2-47f2-8546-a98f59ce92e2"
+    },
+    "choc_lotte_dream_cacao_82": {
+      "name": "롯데 드림카카오 82% GABA 86G",
+      "price": 3990,
+      "weight": "86g",
+      "type": "초콜릿류",
+      "manufacturer": "롯데웰푸드(주)",
+      "origin": "대한민국",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/chocopick-b0c91.firebasestorage.app/o/product_image%2F4.jpeg?alt=media&token=f4c38075-ab9e-464d-a1ca-cbf7de052a88"
+    },
+    "choc_mms_fun_milk_230": {
+      "name": "엠앤엠즈 펀사이즈 밀크 230G",
+      "price": 6290,
+      "weight": "230g",
+      "type": "초콜릿가공품",
+      "manufacturer": "Mars",
+      "origin": "중국",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/chocopick-b0c91.firebasestorage.app/o/product_image%2F5.jpeg?alt=media&token=c92aec91-ee13-4969-b034-791845d55cce"
+    },
+    "choc_lindt_excellence_dark_70": {
+      "name": "린트 엑설런스 다크 70% 100G",
+      "price": 6390,
+      "weight": "100g",
+      "type": "초콜릿",
+      "manufacturer": "Lindt & Sprüngli",
+      "origin": "프랑스",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/chocopick-b0c91.firebasestorage.app/o/product_image%2F6.jpeg?alt=media&token=f32302b2-0c71-454f-aa97-113daa25e6f0"
+    },
+    "choc_lotte_almond_ball_46": {
+      "name": "롯데 아몬드 초코볼 46G",
+      "price": 2090,
+      "weight": "46g",
+      "type": "초코류",
+      "manufacturer": "롯데웰푸드(주)",
+      "origin": "대한민국",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/chocopick-b0c91.firebasestorage.app/o/product_image%2F7.jpeg?alt=media&token=0c1bf263-51b5-44e3-b7cc-6f1012ec023d"
+    },
+    "choc_snickers_minis_1020": {
+      "name": "스니커즈 미니스 1020G",
+      "price": 24990,
+      "weight": "1020g",
+      "type": "초콜릿가공품",
+      "manufacturer": "Mars",
+      "origin": "미국",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/chocopick-b0c91.firebasestorage.app/o/product_image%2F8.jpeg?alt=media&token=dcc4dcc1-c7f5-44a7-b047-cac5f0aa6b61"
+    },
+    "choc_whittakers_peanut_180": {
+      "name": "휘태커스 미니슬랩 피넛 초콜릿 180G",
+      "price": 11990,
+      "weight": "180g",
+      "type": "초콜릿",
+      "manufacturer": "Whittaker’s",
+      "origin": "뉴질랜드",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/chocopick-b0c91.firebasestorage.app/o/product_image%2F9.jpeg?alt=media&token=65bef750-831a-4355-8923-c6b54861d0aa"
+    },
+    "choc_maltesers_bucket_465": {
+      "name": "몰티져스 밀크버켓 초콜릿 465G",
+      "price": 14990,
+      "weight": "465g",
+      "type": "초콜릿",
+      "manufacturer": "Mars",
+      "origin": "호주",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/chocopick-b0c91.firebasestorage.app/o/product_image%2F10.jpeg?alt=media&token=2bbdc0ad-8108-490b-a1b6-60e288d4d1f6"
+    },
+    "choc_lotte_gana_mild_175": {
+      "name": "롯데 미니 가나마일드 175G",
+      "price": 6790,
+      "weight": "175g",
+      "type": "초코류",
+      "manufacturer": "롯데웰푸드(주)",
+      "origin": "대한민국",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/chocopick-b0c91.firebasestorage.app/o/product_image%2F11.jpeg?alt=media&token=fb810606-048a-4684-a8da-e90fb870bca7"
+    },
+    "choc_hershey_kisses_cookie_146": {
+      "name": "허쉬 뉴키세스 쿠키앤크림 146G",
+      "price": 5290,
+      "weight": "146g",
+      "type": "초콜릿가공품",
+      "manufacturer": "Hershey",
+      "origin": "말레이시아",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/chocopick-b0c91.firebasestorage.app/o/product_image%2F12.jpeg?alt=media&token=f9fe9df2-90b9-416a-9621-b0efccee8f4b"
+    },
+    "choc_milka_yogurt_100": {
+      "name": "밀카 요거트 초콜릿 100G",
+      "price": 4480,
+      "weight": "100g",
+      "type": "초콜릿",
+      "manufacturer": "Mondelez",
+      "origin": "독일",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/chocopick-b0c91.firebasestorage.app/o/product_image%2F13.jpeg?alt=media&token=ee0824dc-a21d-4fef-a107-abf0d4bde915"
+    },
+    "choc_lotte_zero_crunch_140": {
+      "name": "롯데 제로 크런치 초코볼 140G",
+      "price": 4990,
+      "weight": "140g",
+      "type": "초콜릿",
+      "manufacturer": "롯데웰푸드(주)",
+      "origin": "대한민국",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/chocopick-b0c91.firebasestorage.app/o/product_image%2F14.jpeg?alt=media&token=dcd0fd8e-7a11-4f17-98de-f378102d4e50"
+    },
+    "choc_ritter_cornflakes_100": {
+      "name": "리터 콘플레이크 초콜릿 100G",
+      "price": 5890,
+      "weight": "100g",
+      "type": "초콜릿가공품",
+      "manufacturer": "Alfred Ritter",
+      "origin": "독일",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/chocopick-b0c91.firebasestorage.app/o/product_image%2F16.jpeg?alt=media&token=382653d4-2be6-4796-aaee-058f8a128022"
+    },
+    "choc_lindt_swiss_thin_milk_125": {
+      "name": "린트 스위스씬 밀크 초콜릿 125G",
+      "price": 15990,
+      "weight": "125g",
+      "type": "밀크초콜릿",
+      "manufacturer": "Lindt & Sprüngli",
+      "origin": "스위스",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/chocopick-b0c91.firebasestorage.app/o/product_image%2F17.jpeg?alt=media&token=b1cf8adf-3766-43e7-8bb1-5df396b3ca38"
+    },
+    "choc_lotte_stone_age_90": {
+      "name": "롯데 석기시대 90G",
+      "price": 3590,
+      "weight": "90g",
+      "type": "초콜릿가공품",
+      "manufacturer": "롯데웰푸드(주)",
+      "origin": "대한민국",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/chocopick-b0c91.firebasestorage.app/o/product_image%2F18.jpeg?alt=media&token=9aa38dba-0e2d-4aef-9c27-5296f0b589ec"
+    },
+    "choc_haitai_earlcho_animal_52": {
+      "name": "해태 얼초 동물그리기 52G",
+      "price": 2580,
+      "weight": "52g",
+      "type": "기타코코아가공품",
+      "manufacturer": "해태제과",
+      "origin": "대한민국",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/chocopick-b0c91.firebasestorage.app/o/product_image%2F19.jpeg?alt=media&token=c9c258c3-8824-488d-9036-8c74c29c7ec8"
+    },
+    "choc_goldensea_seashell_125": {
+      "name": "골든씨 씨쉘 초콜릿 125G",
+      "price": 11990,
+      "weight": "125g",
+      "type": "초콜릿",
+      "manufacturer": "Golden Sea",
+      "origin": "벨기에",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/chocopick-b0c91.firebasestorage.app/o/product_image%2F20.jpeg?alt=media&token=bdd28a9c-eaa8-4821-bbe9-6c4a0c22d22a"
+    }
+  }
+}

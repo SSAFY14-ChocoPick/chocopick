@@ -1,60 +1,78 @@
 package com.ssafy.chocopick.ui.auth
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.ssafy.chocopick.R
+import com.ssafy.chocopick.databinding.FragmentSignUpBinding
+import com.ssafy.chocopick.util.UiState
+import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+class SignUpFragment : Fragment(R.layout.fragment_sign_up) {
 
-/**
- * A simple [Fragment] subclass.
- * Use the [SignUpFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class SignUpFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var _binding: FragmentSignUpBinding? = null
+    private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    private val authViewModel: AuthViewModel by viewModels { AuthViewModelFactory() }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        _binding = FragmentSignUpBinding.bind(view)
+
+        binding.btnSignUp.setOnClickListener {
+            val email = binding.etEmail.text?.toString().orEmpty()
+            val pw = binding.etPassword.text?.toString().orEmpty()
+            authViewModel.signUp(email, pw)
+        }
+
+        binding.btnBackToLogin.setOnClickListener {
+            // TODO: 로그인 화면으로 돌아가기
+            // findNavController().popBackStack()
+        }
+
+        collectAuthState()
+    }
+
+    private fun collectAuthState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                authViewModel.authState.collect { state ->
+                    when (state) {
+                        is UiState.Idle -> {
+                            binding.progress.visibility = View.GONE
+                            binding.btnSignUp.isEnabled = true
+                        }
+                        is UiState.Loading -> {
+                            binding.progress.visibility = View.VISIBLE
+                            binding.btnSignUp.isEnabled = false
+                        }
+                        is UiState.Success -> {
+                            binding.progress.visibility = View.GONE
+                            binding.btnSignUp.isEnabled = true
+                            Toast.makeText(requireContext(), "회원가입 성공 uid=${state.data}", Toast.LENGTH_SHORT).show()
+
+                            authViewModel.resetState()
+
+                            // TODO: 회원가입 후 로그인 화면 이동
+                            // findNavController().popBackStack()
+                        }
+                        is UiState.Error -> {
+                            binding.progress.visibility = View.GONE
+                            binding.btnSignUp.isEnabled = true
+                            Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_sign_up, container, false)
-    }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment SignUpFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            SignUpFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

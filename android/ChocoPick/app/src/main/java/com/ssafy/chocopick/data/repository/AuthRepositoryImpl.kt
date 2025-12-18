@@ -1,4 +1,4 @@
 package com.ssafy.chocopick.data.repository
 
-interface AuthRepository {
+class AuthRepository {
 }

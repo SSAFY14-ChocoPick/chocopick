@@ -4,4 +4,5 @@ import com.ssafy.chocopick.data.model.Product
 
 interface ProductRepository {
     suspend fun fetchProducts(): List<Product>
+    suspend fun fetchProductById(productId : String) : Product
 }

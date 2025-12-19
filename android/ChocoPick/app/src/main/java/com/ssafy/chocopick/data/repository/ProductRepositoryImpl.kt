@@ -7,4 +7,8 @@ class ProductRepositoryImpl(private val dataSource : ProductDataSource) : Produc
     override suspend fun fetchProducts(): List<Product> {
         return dataSource.fetchProduct()
     }
+
+    override suspend fun fetchProductById(productId : String): Product {
+        return dataSource.fetchProductById(productId)
+    }
 }

@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.firebase.Firebase
@@ -59,7 +60,10 @@ class MyPageFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         collectUserState()
+        collectRewardState()
+
         myPageViewModel.loadMyProfile()
+        myPageViewModel.loadReward()
 
         binding.btnLogout.setOnClickListener {
             authViewModel.logout()
@@ -69,6 +73,7 @@ class MyPageFragment : Fragment() {
             }
             startActivity(intent)
         }
+
     }
 
     private fun collectUserState() {
@@ -92,6 +97,29 @@ class MyPageFragment : Fragment() {
             }
         }
     }
+
+    private fun collectRewardState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                myPageViewModel.rewardState.collect { state ->
+                    when (state) {
+                        is UiState.Success -> {
+                            val reward = state.data
+                            binding.tvMembershipGrade.text = reward.membershipTier
+                            binding.progressToNext.progress =
+                                (reward.stamps % 10) * 10
+                            binding.tvMembershipDesc.text =
+                                myPageViewModel.getBenefitText(reward.membershipTier)
+                            binding.tvNextGradeHint.text =
+                                "다음 등급까지 ${10 - (reward.stamps % 10)}회 남았어요"
+                        }
+                        else -> Unit
+                    }
+                }
+            }
+        }
+    }
+
 
     companion object {
         @JvmStatic

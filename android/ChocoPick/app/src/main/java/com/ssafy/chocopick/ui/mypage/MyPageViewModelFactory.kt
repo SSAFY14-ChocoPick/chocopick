@@ -3,8 +3,10 @@ package com.ssafy.chocopick.ui.mypage
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.ssafy.chocopick.data.repository.AuthRepositoryImpl
+import com.ssafy.chocopick.data.repository.RewardRepositoryImpl
 import com.ssafy.chocopick.data.repository.UserRepositoryImpl
 import com.ssafy.chocopick.data.source.firebase.auth.FirebaseAuthDataSource
+import com.ssafy.chocopick.data.source.firebase.realtime.RewardDataSource
 import com.ssafy.chocopick.data.source.firebase.realtime.UserDataSource
 
 class MyPageViewModelFactory : ViewModelProvider.Factory {
@@ -18,8 +20,9 @@ class MyPageViewModelFactory : ViewModelProvider.Factory {
 
             val userRepo = UserRepositoryImpl(UserDataSource())
 
+            val rewardRepo = RewardRepositoryImpl(RewardDataSource())
             @Suppress("UNCHECKED_CAST")
-            return MyPageViewModel(authRepo, userRepo) as T
+            return MyPageViewModel(authRepo, userRepo, rewardRepo) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

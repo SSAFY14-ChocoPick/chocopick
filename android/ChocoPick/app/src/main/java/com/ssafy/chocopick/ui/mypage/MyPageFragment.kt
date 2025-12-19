@@ -74,7 +74,53 @@ class MyPageFragment : Fragment() {
             startActivity(intent)
         }
 
+        // 1) 프로필 카드(내 정보 수정) -> EditProfileFragment
+        binding.cardProfile.setOnClickListener {
+            navigate(EditProfileFragment(), "EDIT_PROFILE")
+        }
+
+        // 2) 최근 주문내역 전체보기 -> OrdersFragment
+        binding.tvMoreOrders.setOnClickListener {
+            navigate(OrdersFragment(), "ORDERS")
+        }
+
+        // 3) 가장 최근 주문 1개 클릭 -> OrderDetailFragment
+        binding.cardOrderItem1.setOnClickListener {
+            // TODO: 실제 orderId로 바꾸기 (지금은 샘플)
+            // navigate(OrderDetailFragment.newInstance("o_001"), "ORDER_DETAIL")
+        }
+
+        // 4) 내 메뉴: 쿠폰/스탬프
+        binding.tvMenuCoupons.setOnClickListener {
+            navigate(CouponsStampsFragment(), "COUPONS_STAMPS")
+        }
+
+        // 5) 내 메뉴: 즐겨찾는 매장
+        binding.tvMenuFavorites.setOnClickListener {
+            navigate(FavoriteStoresFragment(), "FAVORITE_STORES")
+        }
+
+        // 6) 내 메뉴: 결제수단 관리
+        binding.tvMenuPayment.setOnClickListener {
+            navigate(PaymentMethodsFragment(), "PAYMENT_METHODS")
+        }
+
+        // 7) 내 메뉴: 알림 설정
+        binding.tvMenuSettings.setOnClickListener {
+            navigate(NotificationSettingsFragment(), "NOTIFICATION_SETTINGS")
+        }
+
+
+
     }
+
+    private fun navigate(fragment: Fragment, tag: String) {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment, tag)
+            .addToBackStack(tag)
+            .commit()
+    }
+
 
     private fun collectUserState() {
         viewLifecycleOwner.lifecycleScope.launch {

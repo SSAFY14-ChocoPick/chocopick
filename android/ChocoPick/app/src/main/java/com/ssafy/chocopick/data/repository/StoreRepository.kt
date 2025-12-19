@@ -1,4 +1,7 @@
 package com.ssafy.chocopick.data.repository
 
-class StoreRepository {
+import com.ssafy.chocopick.data.source.firebase.realtime.StoreWithId
+
+interface StoreRepository {
+    suspend fun getAllStores(): List<StoreWithId>
 }

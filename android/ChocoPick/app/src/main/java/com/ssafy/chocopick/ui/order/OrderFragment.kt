@@ -27,7 +27,7 @@ class OrderFragment : Fragment(R.layout.fragment_order) {
         onItemClick = {
             clicked ->
             val detail = ProductDetailFragment.newInstance(
-                clicked.productId,
+                clicked.productId
             )
 
             parentFragmentManager.beginTransaction().replace(R.id.fragment_container,

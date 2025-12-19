@@ -7,11 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.bumptech.glide.Glide
 import com.ssafy.chocopick.R
+import com.ssafy.chocopick.data.model.Product
 import com.ssafy.chocopick.databinding.FragmentProductDetailBinding
 import com.ssafy.chocopick.util.UiState
 import kotlinx.coroutines.launch
@@ -26,6 +30,8 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
 
     private var _binding : FragmentProductDetailBinding? = null
     private val binding get() = _binding!!
+
+    private val cartViewModel : CartViewModel by activityViewModels()
 
     companion object {
         @JvmStatic
@@ -44,10 +50,18 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
         ProductDetailViewModelFactory()
     }
 
+    private var qty: Int = 1
+    private var currentProduct: Product? = null
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentProductDetailBinding.bind(view)
-        collectProduct()
+
+        setupQtyUi()
+        setUpAddToCartClick()
+
+        collectProduct() //상품 정보 로드
         viewModel.loadProductDetail(productId)
     }
 
@@ -64,6 +78,54 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
         return inflater.inflate(R.layout.fragment_product_detail, container, false)
     }
 
+    private fun setUpAddToCartClick() {
+        binding.btnAddToCart.setOnClickListener {
+            val p = currentProduct ?: return@setOnClickListener
+            cartViewModel.addToCart(p, qty)
+
+            // ✅ 여기서 "장바구니 담기" 실제 로직 연결하면 됨
+            // 지금은 UI 플로우 먼저라 했으니, 일단 성공했다고 가정하고 다이얼로그 띄움
+            // ex) viewModel.addToCart(p.productId, qty) 같은 걸 나중에 붙이면 됨
+
+            showGoToCartDialog()
+        }
+    }
+
+    private fun setupQtyUi(){
+        binding.tvQty.text = qty.toString()
+
+        binding.btnMinus.setOnClickListener {
+            if (qty > 1) {
+                qty--
+                binding.tvQty.text = qty.toString()
+            }
+        }
+
+        binding.btnPlus.setOnClickListener {
+            qty++
+            binding.tvQty.text = qty.toString()
+        }
+    }
+
+
+    private fun showGoToCartDialog(){
+        AlertDialog.Builder(requireContext())
+            .setTitle("장바구니에 담았어요.")
+            .setMessage("장바구니 화면으로 이동할까요?")
+            .setPositiveButton("네"){
+                _,_ ->
+                parentFragmentManager.popBackStack()
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container,CartFragment())
+                    .addToBackStack(null).commit()
+            }
+            .setNegativeButton("아니요"){
+                _,_ ->
+                parentFragmentManager.popBackStack()
+            }
+            .show()
+    }
+
     private fun collectProduct(){
         viewLifecycleOwner.lifecycleScope.launch{
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
@@ -76,6 +138,8 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
                         }
                         is UiState.Success -> {
                             val p = state.data
+                            currentProduct = p
+
                             binding.productIdTv.text = p.productId
                             binding.productNameTv.text = p.name
                             binding.productPriceTv.text = "${p.price}원"
@@ -83,6 +147,14 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
                             binding.productTypeTv.text = p.type
                             binding.ProductOriginTv.text = p.origin
                             binding.ProductManufactureTv.text = p.manufacturer
+
+                            if(p.imageUrl.isNotBlank()){
+                                Glide.with(binding.ivProduct)
+                                    .load(p.imageUrl)
+                                    .into(binding.ivProduct)
+                            }else{
+                                binding.ivProduct.setImageDrawable(null)
+                            }
                         }
                         is UiState.Error -> {
                             Toast.makeText(requireContext(),state.message,Toast.LENGTH_SHORT).show()

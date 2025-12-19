@@ -8,9 +8,9 @@ import com.ssafy.chocopick.data.source.firebase.realtime.CouponDataSource
 import com.ssafy.chocopick.data.source.firebase.realtime.RewardDataSource
 import com.ssafy.chocopick.data.source.firebase.realtime.UserDataSource
 
-class CouponsStampsViewModelFactory : ViewModelProvider.Factory {
+class RewardViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(CouponsStampsViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(RewardViewModel::class.java)) {
 
             // Auth
             val authDs = FirebaseAuthDataSource()
@@ -26,7 +26,7 @@ class CouponsStampsViewModelFactory : ViewModelProvider.Factory {
             val couponRepo: CouponRepository = CouponRepositoryImpl(couponDs)
 
             @Suppress("UNCHECKED_CAST")
-            return CouponsStampsViewModel(authRepo, rewardRepo, couponRepo) as T
+            return RewardViewModel(authRepo, rewardRepo, couponRepo) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
     }

@@ -5,20 +5,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.ssafy.chocopick.data.model.Order
 import com.ssafy.chocopick.databinding.ItemOrderBinding
 import java.text.DecimalFormat
 
-data class OrderListUi(
-    val orderId: String,
-    val storeName: String,
-    val status: String,
-    val dateText: String,
-    val totalPrice: Int
-)
 
 class OrdersAdapter(
-    private val onClick: (OrderListUi) -> Unit
-) : ListAdapter<OrderListUi, OrdersAdapter.VH>(diff) {
+    private val onClick: (Order) -> Unit
+) : ListAdapter<Order, OrdersAdapter.VH>(diff) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val binding = ItemOrderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -31,13 +25,19 @@ class OrdersAdapter(
 
     class VH(
         private val binding: ItemOrderBinding,
-        private val onClick: (OrderListUi) -> Unit
+        private val onClick: (Order) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: OrderListUi) = with(binding) {
-            tvStore.text = item.storeName
+        fun bind(item: Order) = with(binding) {
+            // 🔥 storeName이 없으니 일단 storeId 표시 (나중에 store 매핑하면 여기만 바꾸면 됨)
+            tvStore.text = item.storeId.ifBlank { "매장" }
+
             tvStatus.text = item.status
-            tvDate.text = item.dateText
+
+            // createdAt → 날짜 문자열
+            tvDate.text = java.text.SimpleDateFormat("yyyy.MM.dd HH:mm", java.util.Locale.KOREA)
+                .format(java.util.Date(item.createdAt))
+
             tvPrice.text = "₩ ${DecimalFormat("#,###").format(item.totalPrice)}"
 
             root.setOnClickListener { onClick(item) }
@@ -45,12 +45,13 @@ class OrdersAdapter(
     }
 
     companion object {
-        private val diff = object : DiffUtil.ItemCallback<OrderListUi>() {
-            override fun areItemsTheSame(oldItem: OrderListUi, newItem: OrderListUi) =
+        private val diff = object : DiffUtil.ItemCallback<Order>() {
+            override fun areItemsTheSame(oldItem: Order, newItem: Order) =
                 oldItem.orderId == newItem.orderId
 
-            override fun areContentsTheSame(oldItem: OrderListUi, newItem: OrderListUi) =
+            override fun areContentsTheSame(oldItem: Order, newItem: Order) =
                 oldItem == newItem
         }
     }
 }
+

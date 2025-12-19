@@ -75,6 +75,7 @@ class MyPageViewModel(
             else -> ""
         }
 
+    // 최근 주문 목록 1개 로드
     private val _recentOrderState = MutableStateFlow<UiState<Order>>(UiState.Idle)
     val recentOrderState: StateFlow<UiState<Order>> = _recentOrderState
 
@@ -98,5 +99,29 @@ class MyPageViewModel(
             }
         }
     }
+
+    // 최근 주문 목록 전체 로드
+    private val _ordersState = MutableStateFlow<UiState<List<Order>>>(UiState.Idle)
+    val ordersState: StateFlow<UiState<List<Order>>> = _ordersState
+
+    fun loadOrderList(limit: Int = 50) {
+        val uid = authRepository.getCurrentUid()
+        if (uid.isNullOrBlank()) {
+            _ordersState.value = UiState.Error("로그인이 필요합니다.")
+            return
+        }
+
+        _ordersState.value = UiState.Loading
+        viewModelScope.launch {
+            runCatching { orderRepository.getOrders(uid, limit) }
+                .onSuccess { orders ->
+                    _ordersState.value = UiState.Success(orders) // ✅ createdAt 최신순 정렬 이미 DS에서 처리됨
+                }
+                .onFailure { e ->
+                    _ordersState.value = UiState.Error(e.message ?: "주문 목록 로드 실패", e)
+                }
+        }
+    }
+
 
 }

@@ -5,14 +5,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ssafy.chocopick.R
 import com.ssafy.chocopick.databinding.FragmentOrdersBinding
+import com.ssafy.chocopick.util.UiState
+import kotlinx.coroutines.launch
 
 class OrdersFragment : Fragment() {
 
     private var _binding: FragmentOrdersBinding? = null
     private val binding get() = _binding!!
+
+    private val myPageViewModel: MyPageViewModel by viewModels {
+        MyPageViewModelFactory()
+    }
 
     private val adapter = OrdersAdapter { order ->
         requireActivity().supportFragmentManager.beginTransaction()
@@ -21,11 +31,7 @@ class OrdersFragment : Fragment() {
             .commit()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentOrdersBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -38,14 +44,30 @@ class OrdersFragment : Fragment() {
         binding.rvOrders.layoutManager = LinearLayoutManager(requireContext())
         binding.rvOrders.adapter = adapter
 
-        // ✅ 지금은 UI 확인용 더미 (나중에 ViewModel로 교체)
-        adapter.submitList(
-            listOf(
-                OrderListUi("o_001", "초코픽 강남점", "READY", "2025.12.19 09:12", 8900),
-                OrderListUi("o_002", "초코픽 역삼점", "PICKED_UP", "2025.12.16 18:03", 6500),
-                OrderListUi("o_003", "초코픽 동탄점", "PAID", "2025.12.10 12:20", 9200),
-            )
-        )
+        collectOrders()
+        myPageViewModel.loadOrderList()
+    }
+
+    private fun collectOrders() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                myPageViewModel.ordersState.collect { state ->
+                    when (state) {
+                        is UiState.Loading -> {
+                            // 로딩 UI 있으면 표시
+                        }
+                        is UiState.Success -> {
+                            adapter.submitList(state.data)
+                        }
+                        is UiState.Error -> {
+                            // 빈 리스트 처리하거나 토스트
+                            adapter.submitList(emptyList())
+                        }
+                        else -> Unit
+                    }
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -53,3 +75,4 @@ class OrdersFragment : Fragment() {
         _binding = null
     }
 }
+

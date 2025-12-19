@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_main"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="0dp">
+
+        <!-- Header -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardHeader"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="22dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/bg_surface"
+            app:strokeColor="@color/divider"
+            app:strokeWidth="1dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <ImageView
+                    android:id="@+id/btnBack"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@drawable/ic_previous"
+                    android:contentDescription="back"
+                    app:tint="@color/text_primary"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <TextView
+                    android:id="@+id/tvTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="쿠폰 / 스탬프"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="@color/text_primary"
+                    android:layout_marginStart="10dp"
+                    app:layout_constraintStart_toEndOf="@id/btnBack"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ✅ Membership + Stamp Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardStamps"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:cardCornerRadius="22dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/bg_surface"
+            app:strokeColor="@color/divider"
+            app:strokeWidth="1dp"
+            app:layout_constraintTop_toBottomOf="@id/cardHeader"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="18dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvSection1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="내 멤버십"
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:textColor="@color/text_primary"/>
+
+                <!-- ✅ 등급 표시 -->
+                <TextView
+                    android:id="@+id/tvTier"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="멤버십: -"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_primary"/>
+
+                <!-- ✅ 이번 달 혜택 표시 -->
+                <TextView
+                    android:id="@+id/tvTierBenefit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="이번 달 혜택: -"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_secondary"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="12dp"
+                    android:background="@color/divider"/>
+
+                <TextView
+                    android:id="@+id/tvSection2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="스탬프"
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:textColor="@color/text_primary"/>
+
+                <TextView
+                    android:id="@+id/tvStampCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="현재 스탬프: -"
+                    android:textSize="13sp"
+                    android:textColor="@color/text_secondary"/>
+
+                <!-- ✅ 10개 단위 진행 상황 -->
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/progressStamp"
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp"
+                    android:layout_marginTop="10dp"
+                    app:trackCornerRadius="8dp"
+                    app:indicatorColor="@color/choco_primary"
+                    app:trackColor="@color/divider"
+                    android:progress="0"/>
+
+                <TextView
+                    android:id="@+id/tvStampHint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="10개 모으면 아메리카노 쿠폰 1장 발행 가능해요."
+                    android:textSize="12sp"
+                    android:textColor="@color/text_secondary"/>
+
+                <!-- ✅ 발행 버튼 -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnIssueAmericano"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="12dp"
+                    android:text="아메리카노 쿠폰 발행 (스탬프 10개)"
+                    android:textColor="@color/bg_surface"
+                    android:backgroundTint="@color/choco_primary"
+                    app:cornerRadius="16dp"
+                    android:enabled="false"/>
+
+                <!-- ✅ 보유 아메리카노 쿠폰 -->
+                <TextView
+                    android:id="@+id/tvAmericanoCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="보유 아메리카노 쿠폰: -장"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:textColor="@color/text_primary"/>
+
+                <!-- ✅ 쿠폰 사용 -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnUseCoupon"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="10dp"
+                    android:text="아메리카노 쿠폰 사용"
+                    android:textColor="@color/bg_surface"
+                    android:backgroundTint="@color/choco_primary"
+                    app:cornerRadius="16dp"
+                    android:enabled="false"/>
+
+                <TextView
+                    android:id="@+id/tvUseHint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="결제 단계에서 자동으로 적용돼요."
+                    android:textSize="12sp"
+                    android:textColor="@color/text_secondary"/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ✅ Membership Guide Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardMembershipGuide"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:cardCornerRadius="22dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/bg_surface"
+            app:strokeColor="@color/divider"
+            app:strokeWidth="1dp"
+            app:layout_constraintTop_toBottomOf="@id/cardStamps"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="18dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvGuideTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="멤버십 안내"
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:textColor="@color/text_primary"/>
+
+                <TextView
+                    android:id="@+id/tvGuideBody"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_secondary"
+                    android:lineSpacingExtra="2dp"
+                    android:text="• 등급은 BRONZE / SILVER / GOLD로 구성돼요.\n• 주문 누적 횟수(또는 픽업 완료 기준)에 따라 자동 승급돼요.\n• 등급별 이번 달 혜택은 ‘내 멤버십’ 영역에 표시돼요.\n\n[예시 혜택]\n- BRONZE: 무료 사이즈업 1회\n- SILVER: 픽업 무료 쿠폰 1장\n- GOLD: 매장 에코(개인컵) 무료 쿠폰 1장"/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ✅ Stamp/Coupon Rules Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardRules"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:cardCornerRadius="22dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/bg_surface"
+            app:strokeColor="@color/divider"
+            app:strokeWidth="1dp"
+            app:layout_constraintTop_toBottomOf="@id/cardMembershipGuide"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="18dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvRulesTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="적립 / 사용 안내"
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:textColor="@color/text_primary"/>
+
+                <TextView
+                    android:id="@+id/tvRules"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textSize="12sp"
+                    android:textColor="@color/text_secondary"
+                    android:lineSpacingExtra="2dp"
+                    android:text="• 픽업 완료(PICKED_UP) 상태가 되면 스탬프가 적립돼요.\n• 기본 적립: 음료 1잔당 스탬프 1개 (정책에 따라 변경될 수 있어요)\n• 스탬프 10개 → 아메리카노 쿠폰 1장 발행\n• 발행 시: 스탬프 -10, 아메리카노 쿠폰 +1\n• 쿠폰은 결제 단계에서 1회 적용(중복 사용 불가)\n• 발행/사용 내역은 추후 ‘쿠폰 목록’에서 확인 가능해요."/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

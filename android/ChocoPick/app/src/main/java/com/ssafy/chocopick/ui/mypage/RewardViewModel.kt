@@ -12,19 +12,20 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class CouponsStampsViewModel(
+class RewardViewModel(
     private val authRepository: AuthRepository,
     private val rewardRepository: RewardRepository,
-    private val couponRepository: CouponRepository
+    private val couponRepository: CouponRepository // (선택) 이벤트 쿠폰 등 확장용
 ) : ViewModel() {
 
     private val _rewardState = MutableStateFlow<UiState<Reward>>(UiState.Idle)
     val rewardState: StateFlow<UiState<Reward>> = _rewardState
 
+    // (선택) “이벤트 쿠폰 목록” 같은 게 있으면 유지
     private val _couponsState = MutableStateFlow<UiState<List<Coupon>>>(UiState.Idle)
     val couponsState: StateFlow<UiState<List<Coupon>>> = _couponsState
 
-    fun load() {
+    fun load(loadCouponsToo: Boolean = false) {
         val uid = authRepository.getCurrentUid()
         if (uid.isNullOrBlank()) {
             _rewardState.value = UiState.Error("로그인이 필요합니다.")
@@ -33,7 +34,7 @@ class CouponsStampsViewModel(
         }
 
         loadReward(uid)
-        loadCoupons(uid)
+        if (loadCouponsToo) loadCoupons(uid)
     }
 
     private fun loadReward(uid: String) {
@@ -59,9 +60,18 @@ class CouponsStampsViewModel(
         }
     }
 
+    // ✅ 화면에서 그대로 호출하기 편하게
+    fun getBenefitText(tier: String): String =
+        when (tier) {
+            "BRONZE" -> "이번 달 혜택: 무료 사이즈업 1회"
+            "SILVER" -> "이번 달 혜택: 픽업 무료 쿠폰 1장"
+            "GOLD" -> "이번 달 혜택: 매장 에코(개인컵) 무료 쿠폰 1장"
+            else -> "이번 달 혜택: -"
+        }
+
     /**
-     * "쿠폰 사용하기" 버튼 동작(임시):
-     * - 보유 쿠폰이 있으면 첫 번째 쿠폰을 사용 처리(삭제 or used=true)
+     * ✅ 아메리카노 쿠폰 사용하기 (Reward 기반)
+     * - americanoCoupons > 0 이면 1장 감소
      */
     fun useCouponIfPossible(
         onNotEnough: () -> Unit,
@@ -73,24 +83,41 @@ class CouponsStampsViewModel(
             return
         }
 
-        val state = _couponsState.value
-        val coupons = (state as? UiState.Success)?.data.orEmpty()
-        if (coupons.isEmpty()) {
+        viewModelScope.launch {
+            runCatching { rewardRepository.useAmericanoIfPossible(uid) }
+                .onSuccess { updated ->
+                    _rewardState.value = UiState.Success(updated)
+                    onUsed()
+                }
+                .onFailure {
+                    onNotEnough()
+                }
+        }
+    }
+
+    /**
+     * ✅ 아메리카노 쿠폰 발행
+     * - stamps >= 10 이면 stamps-10, americanoCoupons+1
+     */
+    fun issueAmericano(
+        onNotEnough: () -> Unit,
+        onIssued: () -> Unit
+    ) {
+        val uid = authRepository.getCurrentUid()
+        if (uid.isNullOrBlank()) {
             onNotEnough()
             return
         }
 
-        val first = coupons.first()
-
         viewModelScope.launch {
-            runCatching {
-                couponRepository.useCoupon(uid, first.couponId)
-            }.onSuccess {
-                onUsed()
-                loadCoupons(uid) // 사용 후 다시 로드
-            }.onFailure {
-                onNotEnough()
-            }
+            runCatching { rewardRepository.issueAmericanoIfPossible(uid) }
+                .onSuccess { updated ->
+                    _rewardState.value = UiState.Success(updated)
+                    onIssued()
+                }
+                .onFailure {
+                    onNotEnough()
+                }
         }
     }
 }

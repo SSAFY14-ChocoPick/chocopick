@@ -3,6 +3,7 @@ package com.ssafy.chocopick.data.source.firebase.realtime
 object RealtimePaths {
     const val USERS = "users"
     const val STORES = "stores"
+    const val FAVORITES = "favorites"
     const val ORDERS = "orders"
     const val USER_ORDERS = "userOrders"   // 인덱스: userOrders/{uid}/{orderId}=true
     const val REWARDS = "rewards"          // rewards/{uid} = Reward

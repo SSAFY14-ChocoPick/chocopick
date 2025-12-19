@@ -100,12 +100,7 @@ class MyPageFragment : Fragment() {
             navigate(FavoriteStoresFragment(), "FAVORITE_STORES")
         }
 
-        // 6) 내 메뉴: 결제수단 관리
-        binding.tvMenuPayment.setOnClickListener {
-            navigate(PaymentMethodsFragment(), "PAYMENT_METHODS")
-        }
-
-        // 7) 내 메뉴: 알림 설정
+        // 6) 내 메뉴: 알림 설정
         binding.tvMenuSettings.setOnClickListener {
             navigate(NotificationSettingsFragment(), "NOTIFICATION_SETTINGS")
         }

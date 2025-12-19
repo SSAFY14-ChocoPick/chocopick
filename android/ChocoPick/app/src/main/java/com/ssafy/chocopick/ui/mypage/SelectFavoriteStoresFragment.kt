@@ -10,24 +10,23 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.ssafy.chocopick.R
-import com.ssafy.chocopick.databinding.FragmentFavoriteStoresBinding
+import com.ssafy.chocopick.databinding.FragmentSelectFavoriteStoresBinding
 import com.ssafy.chocopick.util.UiState
 import kotlinx.coroutines.launch
 
-class FavoriteStoresFragment : Fragment() {
+class SelectFavoriteStoresFragment : Fragment() {
 
-    private var _binding: FragmentFavoriteStoresBinding? = null
+    private var _binding: FragmentSelectFavoriteStoresBinding? = null
     private val binding get() = _binding!!
 
     private val vm: FavoriteStoresViewModel by viewModels { FavoriteStoresViewModelFactory() }
 
-    private val adapter = FavoriteOnlyAdapter { storeId ->
-        vm.toggleFavorite(storeId, false) // ⭐ 눌러서 해제
+    private val adapter = AllStoresAdapter(emptySet()) { storeId, newValue ->
+        vm.toggleFavorite(storeId, newValue)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentFavoriteStoresBinding.inflate(inflater, container, false)
+        _binding = FragmentSelectFavoriteStoresBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -36,27 +35,31 @@ class FavoriteStoresFragment : Fragment() {
 
         binding.btnBack.setOnClickListener { parentFragmentManager.popBackStack() }
 
-        binding.rvFavoriteStores.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvFavoriteStores.adapter = adapter
-
-        binding.btnAddFavorite.setOnClickListener {
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, SelectFavoriteStoresFragment())
-                .addToBackStack("SELECT_FAVORITE_STORES")
-                .commit()
-        }
+        binding.rvAllStores.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvAllStores.adapter = adapter
 
         collect()
         vm.loadAllStoresAndFavorites()
     }
 
     private fun collect() {
+        // 전체 매장 로드
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                vm.favoriteStoresState.collect { state ->
-                    when (state) {
-                        is UiState.Success -> adapter.submitList(state.data)
-                        else -> Unit
+                vm.allStoresState.collect { state ->
+                    if (state is UiState.Success) {
+                        adapter.submitList(state.data, vm.favoriteIdsSnapshot())
+                    }
+                }
+            }
+        }
+        // 즐겨찾기 id 변경 시(별 토글) 즉시 반영
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                vm.favoriteIdsState.collect { state ->
+                    if (state is UiState.Success) {
+                        val stores = (vm.allStoresState.value as? UiState.Success)?.data.orEmpty()
+                        adapter.submitList(stores, state.data)
                     }
                 }
             }

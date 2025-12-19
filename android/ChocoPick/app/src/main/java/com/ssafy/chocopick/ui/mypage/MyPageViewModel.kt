@@ -2,9 +2,11 @@ package com.ssafy.chocopick.ui.mypage
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ssafy.chocopick.data.model.Order
 import com.ssafy.chocopick.data.model.Reward
 import com.ssafy.chocopick.data.model.User
 import com.ssafy.chocopick.data.repository.AuthRepository
+import com.ssafy.chocopick.data.repository.OrderRepository
 import com.ssafy.chocopick.data.repository.RewardRepository
 import com.ssafy.chocopick.data.repository.UserRepository
 import com.ssafy.chocopick.util.UiState
@@ -15,7 +17,8 @@ import kotlinx.coroutines.launch
 class MyPageViewModel(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
-    private val rewardRepository: RewardRepository
+    private val rewardRepository: RewardRepository,
+    private val orderRepository: OrderRepository
 ) : ViewModel() {
 
     private val _userState = MutableStateFlow<UiState<User>>(UiState.Idle)
@@ -71,5 +74,29 @@ class MyPageViewModel(
             "GOLD" -> "이번 달 혜택: 매장 에코(개인컵) 무료 쿠폰 1장"
             else -> ""
         }
+
+    private val _recentOrderState = MutableStateFlow<UiState<Order>>(UiState.Idle)
+    val recentOrderState: StateFlow<UiState<Order>> = _recentOrderState
+
+    fun loadRecentOrder() {
+        val uid = authRepository.getCurrentUid() ?: run {
+            _recentOrderState.value = UiState.Error("로그인 필요")
+            return
+        }
+
+        viewModelScope.launch {
+            runCatching {
+                orderRepository.getMostRecentOrder(uid)
+            }.onSuccess { order ->
+                if (order == null) {
+                    _recentOrderState.value = UiState.Error("주문 없음")
+                } else {
+                    _recentOrderState.value = UiState.Success(order)
+                }
+            }.onFailure {
+                _recentOrderState.value = UiState.Error("주문 로드 실패", it)
+            }
+        }
+    }
 
 }

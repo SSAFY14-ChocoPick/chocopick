@@ -61,7 +61,10 @@ class MyPageFragment : Fragment() {
 
         collectUserState()
         collectRewardState()
+        collectRecentOrder()
 
+        // 가장 최근 주문 1개 가져오기
+        myPageViewModel.loadRecentOrder()
         myPageViewModel.loadMyProfile()
         myPageViewModel.loadReward()
 
@@ -86,9 +89,14 @@ class MyPageFragment : Fragment() {
 
         // 3) 가장 최근 주문 1개 클릭 -> OrderDetailFragment
         binding.cardOrderItem1.setOnClickListener {
-            // TODO: 실제 orderId로 바꾸기 (지금은 샘플)
-            // navigate(OrderDetailFragment.newInstance("o_001"), "ORDER_DETAIL")
+            recentOrderId?.let { orderId ->
+                navigate(
+                    OrderDetailFragment.newInstance(orderId),
+                    "ORDER_DETAIL"
+                )
+            }
         }
+
 
         // 4) 내 메뉴: 쿠폰/스탬프
         binding.tvMenuCoupons.setOnClickListener {
@@ -161,6 +169,35 @@ class MyPageFragment : Fragment() {
         }
     }
 
+    private var recentOrderId: String? = null
+
+    private fun collectRecentOrder() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                myPageViewModel.recentOrderState.collect { state ->
+                    when (state) {
+                        is UiState.Success -> {
+                            val order = state.data
+                            recentOrderId = order.orderId
+
+                            binding.cardOrderItem1.visibility = View.VISIBLE
+                            binding.tvEmptyOrders.visibility = View.GONE
+
+                            binding.tvOrderStore1.text = order.storeId
+                            binding.tvOrderStatus1.text = order.status
+                            binding.tvOrderMenu1.text = order.items.keys.joinToString()
+                            binding.tvOrderDate1.text = "2025.12.19" // format
+                            binding.tvOrderPrice1.text = "₩ ${order.totalPrice}"
+                        }
+                        else -> {
+                            binding.cardOrderItem1.visibility = View.GONE
+                            binding.tvEmptyOrders.visibility = View.VISIBLE
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     companion object {
         @JvmStatic

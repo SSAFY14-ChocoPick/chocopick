@@ -31,15 +31,10 @@ class OrderDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.btnBack.setOnClickListener { requireActivity().supportFragmentManager.popBackStack() }
+        binding.btnBack.setOnClickListener {
+            requireActivity().supportFragmentManager.popBackStack()
+        }
 
-        // ✅ 지금은 UI 확인용 더미 (나중에 RTDB에서 orderId로 로드)
-        binding.tvOrderId.text = "주문번호: #$orderId"
-        binding.tvStore.text = "초코픽 강남점"
-        binding.tvStatus.text = "READY"
-        binding.tvDate.text = "2025.12.19 09:12"
-        binding.tvItems.text = "다크초코 라떼 x1\n브라우니 x1"
-        binding.tvTotal.text = "총 결제금액: ₩ ${DecimalFormat("#,###").format(8900)}"
     }
 
     override fun onDestroyView() {
@@ -55,4 +50,5 @@ class OrderDetailFragment : Fragment() {
                 }
             }
     }
+
 }

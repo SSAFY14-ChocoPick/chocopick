@@ -1,9 +1,21 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+
+    <!-- Base application theme -->
     <style name="Base.Theme.ChocoPick" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+        <!-- 🔥 BottomNavigationView 연보라 pill 제거 -->
+        <item name="colorSecondaryContainer">@android:color/transparent</item>
+        <item name="colorOnSecondaryContainer">@color/choco_primary</item>
+
+        <!-- 🔥 눌림/강조 효과 제거 (보라 ripple 방지) -->
+        <item name="colorControlHighlight">@android:color/transparent</item>
+
+        <!-- (선택) 혹시 남아있을 수 있는 기본 강조색도 통일 -->
+        <item name="colorPrimary">@color/choco_primary</item>
+
     </style>
 
+    <!-- 실제 앱에서 사용하는 테마 -->
     <style name="Theme.ChocoPick" parent="Base.Theme.ChocoPick" />
+
 </resources>

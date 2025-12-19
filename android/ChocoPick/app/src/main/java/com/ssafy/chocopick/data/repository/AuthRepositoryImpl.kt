@@ -1,12 +1,14 @@
 package com.ssafy.chocopick.data.repository
 
+import com.ssafy.chocopick.data.model.Reward
 import com.ssafy.chocopick.data.model.User
 import com.ssafy.chocopick.data.source.firebase.auth.FirebaseAuthDataSource
+import com.ssafy.chocopick.data.source.firebase.realtime.RewardDataSource
 import com.ssafy.chocopick.data.source.firebase.realtime.UserDataSource
 
 class AuthRepositoryImpl(
     private val authDataSource: FirebaseAuthDataSource,
-    private val userDataSource: UserDataSource
+    private val userDataSource: UserDataSource,
 ) : AuthRepository {
     override fun getCurrentUid(): String? = authDataSource.currentUser()?.uid
 
@@ -21,8 +23,15 @@ class AuthRepositoryImpl(
             nickname = nickname
         )
 
+        val reward = Reward(
+            uid = fbUser.uid,
+            stamps = 0,
+            membershipTier = "BRONZE",
+            totalOrders = 0
+        )
         try {
-            userDataSource.upsertUser(user)
+            userDataSource.createUserWithReward(user, reward)
+
             android.util.Log.d("RTDB", "✅ user saved to RTDB: uid=${fbUser.uid}")
         } catch (e: Exception) {
             android.util.Log.e("RTDB", "❌ user save failed: ${e.message}", e)

@@ -1,7 +1,18 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+
     <style name="Base.Theme.ChocoPick" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+
+        <!-- BottomNavigationView pill 제거 (night) -->
+        <item name="colorSecondaryContainer">@android:color/transparent</item>
+        <item name="colorOnSecondaryContainer">@color/choco_primary</item>
+
+        <!-- ripple / highlight 제거 -->
+        <item name="colorControlHighlight">@android:color/transparent</item>
+
+        <item name="colorPrimary">@color/choco_primary</item>
+
     </style>
+
+    <style name="Theme.ChocoPick" parent="Base.Theme.ChocoPick" />
+
 </resources>

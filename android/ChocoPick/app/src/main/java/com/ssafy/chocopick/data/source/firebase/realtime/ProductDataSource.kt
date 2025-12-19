@@ -18,4 +18,10 @@ class ProductDataSource(
             p.copy(productId = productId)
         }
     }
+
+    suspend fun fetchProductById(productId : String) : Product {
+        val snapshot = ref.child(productId).get().await()
+        val p = snapshot.getValue(Product::class.java)
+        return p!!.copy(productId = productId)
+    }
 }

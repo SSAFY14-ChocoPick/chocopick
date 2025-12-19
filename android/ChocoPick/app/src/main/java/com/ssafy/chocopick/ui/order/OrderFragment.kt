@@ -23,7 +23,17 @@ class OrderFragment : Fragment(R.layout.fragment_order) {
         OrderViewModelFactory()
     }
 
-    private val productAdapter = ProductAdapter()
+    private val productAdapter = ProductAdapter(
+        onItemClick = {
+            clicked ->
+            val detail = ProductDetailFragment.newInstance(
+                clicked.productId,
+            )
+
+            parentFragmentManager.beginTransaction().replace(R.id.fragment_container,
+                detail).addToBackStack(null).commit()
+        }
+    )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

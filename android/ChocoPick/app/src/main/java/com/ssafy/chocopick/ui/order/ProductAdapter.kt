@@ -8,7 +8,7 @@ import com.bumptech.glide.Glide
 import com.ssafy.chocopick.data.model.Product
 import com.ssafy.chocopick.databinding.ItemProductBinding
 
-class ProductAdapter : RecyclerView.Adapter<ProductAdapter.ViewHolder>() {
+class ProductAdapter(private val onItemClick : (Product) -> Unit) : RecyclerView.Adapter<ProductAdapter.ViewHolder>() {
 
     private val items  = mutableListOf<Product>()
 
@@ -33,6 +33,8 @@ class ProductAdapter : RecyclerView.Adapter<ProductAdapter.ViewHolder>() {
             } else {
                 binding.ivThumb.setImageDrawable(null)
             }
+
+            itemView.setOnClickListener { onItemClick(item) }
         }
     }
     override fun onCreateViewHolder(

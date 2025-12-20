@@ -1,15 +1,14 @@
 package com.ssafy.chocopick.data.source.firebase.realtime
 
-import com.google.firebase.database.FirebaseDatabase
 import com.ssafy.chocopick.data.model.Order
 import kotlinx.coroutines.tasks.await
 
 class OrderDataSource(
-    private val rtdb: FirebaseDatabase = FirebaseDatabase.getInstance()
+    private val db: RealtimeDbClient = RealtimeDbClient()
 ) {
 
     private fun ordersRef(uid: String) =
-        rtdb.reference.child(RealtimePaths.ORDERS).child(uid)
+        db.child(RealtimePaths.ORDERS).child(uid)
 
     /** /orders/{uid}/{orderId} = order */
     suspend fun upsertOrder(order: Order) {
@@ -30,7 +29,6 @@ class OrderDataSource(
             .get()
             .await()
 
-        // limitToLast는 "오래된→최신"으로 담기므로, 최신순으로 뒤집어줌
         val list = snap.children.mapNotNull { child ->
             val o = child.getValue(Order::class.java) ?: return@mapNotNull null
             if (o.orderId.isBlank()) o.copy(orderId = child.key.orEmpty()) else o

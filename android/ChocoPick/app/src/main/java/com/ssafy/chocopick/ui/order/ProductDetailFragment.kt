@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.ssafy.chocopick.R
 import com.ssafy.chocopick.data.model.Product
 import com.ssafy.chocopick.databinding.FragmentProductDetailBinding
+import com.ssafy.chocopick.ui.review.ReviewsFragment
 import com.ssafy.chocopick.util.UiState
 import kotlinx.coroutines.launch
 
@@ -60,7 +61,12 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentProductDetailBinding.bind(view)
-
+        binding.btnGoReviews.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, ReviewsFragment.newInstance(productId, /*myNickname*/ ""))
+                .addToBackStack("REVIEWS")
+                .commit()
+        }
         setupQtyUi()
         setUpAddToCartClick()
 

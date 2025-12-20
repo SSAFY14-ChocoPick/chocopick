@@ -10,17 +10,17 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ssafy.chocopick.R
-import com.ssafy.chocopick.databinding.FragmentOrderBinding
+import com.ssafy.chocopick.databinding.FragmentProductListBinding
 import com.ssafy.chocopick.util.UiState
 import kotlinx.coroutines.launch
 
-class OrderFragment : Fragment(R.layout.fragment_order) {
+class ProductListFragment : Fragment(R.layout.fragment_product_list) {
 
-    private var _binding: FragmentOrderBinding? = null
+    private var _binding: FragmentProductListBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: OrderViewModel by viewModels {
-        OrderViewModelFactory()
+    private val viewModel: ProductListViewModel by viewModels {
+        ProductListViewModelFactory()
     }
 
     private val productAdapter = ProductAdapter(
@@ -37,13 +37,22 @@ class OrderFragment : Fragment(R.layout.fragment_order) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _binding = FragmentOrderBinding.bind(view)
+        _binding = FragmentProductListBinding.bind(view)
 
         setupRecyclerView()
+        setupFAB()
         collectProducts()
 
         // 🔥 Fragment 진입 시 상품 로드
         viewModel.loadProducts()
+    }
+
+    private fun setupFAB() {
+        binding.fabCart.setOnClickListener {
+            parentFragmentManager.beginTransaction().
+            replace(R.id.fragment_container, CartFragment())
+                .addToBackStack(null).commit()
+        }
     }
 
     private fun setupRecyclerView() {

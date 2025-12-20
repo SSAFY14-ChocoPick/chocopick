@@ -140,13 +140,12 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
                             val p = state.data
                             currentProduct = p
 
-                            binding.productIdTv.text = p.productId
-                            binding.productNameTv.text = p.name
-                            binding.productPriceTv.text = "${p.price}원"
-                            binding.productWeightTv.text = p.weight
-                            binding.productTypeTv.text = p.type
-                            binding.ProductOriginTv.text = p.origin
-                            binding.ProductManufactureTv.text = p.manufacturer
+                            binding.productNameTv.text = "제품명 : ${p.name}"
+                            binding.productPriceTv.text = "가격 : ${p.price}원"
+                            binding.productWeightTv.text = "총 내용량 : ${p.weight}"
+                            binding.productTypeTv.text = "식품의 유형 : ${p.type}"
+                            binding.ProductOriginTv.text = "원산지 : ${p.origin}"
+                            binding.ProductManufactureTv.text = "제조(수입)업체 : ${p.manufacturer}"
 
                             if(p.imageUrl.isNotBlank()){
                                 Glide.with(binding.ivProduct)

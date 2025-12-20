@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.order.OrderFragment">
+    tools:context=".ui.order.ProductListFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvProducts"
@@ -16,5 +16,16 @@
         android:layout_height="48dp"
         android:layout_gravity="center"
         android:visibility="gone"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabCart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="20dp"
+        android:src="@drawable/ic_nav_order"
+        android:tint="@android:color/white"
+        android:backgroundTint="@color/choco_primary"
+        tools:ignore="ContentDescription" />
 
 </FrameLayout>

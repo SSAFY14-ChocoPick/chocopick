@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class OrderViewModel(
+class ProductListViewModel(
     private val repo: ProductRepository
 ) : ViewModel(){
     private val _productState = MutableStateFlow<UiState<List<Product>>>(UiState.Idle)

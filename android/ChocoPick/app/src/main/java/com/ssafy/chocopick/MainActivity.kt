@@ -10,7 +10,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.ssafy.chocopick.databinding.ActivityMainBinding
 import com.ssafy.chocopick.ui.home.HomeFragment
 import com.ssafy.chocopick.ui.mypage.MyPageFragment
-import com.ssafy.chocopick.ui.order.OrderFragment
+import com.ssafy.chocopick.ui.order.ProductListFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
             item ->
                 when(item.itemId){
                     R.id.nav_home -> replaceFragment(HomeFragment())
-                    R.id.nav_order -> replaceFragment(OrderFragment())
+                    R.id.nav_order -> replaceFragment(ProductListFragment())
                     R.id.nav_mypage -> replaceFragment(MyPageFragment())
                     else -> return@setOnItemSelectedListener false
                 }

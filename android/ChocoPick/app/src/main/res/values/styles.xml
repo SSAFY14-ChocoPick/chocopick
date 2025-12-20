@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ChocoPick: 기본 둥근 Shape (부모) -->
+    <style name="ShapeAppearanceChocoPick">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <!-- ChocoPick: 썸네일 전용 (부모 상속) -->
+    <style name="ShapeAppearanceChocoPickThumb" parent="@style/ShapeAppearanceChocoPick" />
+
+</resources>

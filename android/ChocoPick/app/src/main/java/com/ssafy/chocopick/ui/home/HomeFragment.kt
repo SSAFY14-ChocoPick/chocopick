@@ -6,9 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.replace
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.google.firebase.auth.FirebaseAuth
 import com.ssafy.chocopick.R
 import com.ssafy.chocopick.databinding.FragmentHomeBinding
+import com.ssafy.chocopick.ui.home.store.SelectedStoreViewModel
+import com.ssafy.chocopick.ui.home.store.SelectedStoreViewModelFactory
+import com.ssafy.chocopick.ui.home.store.StoreListFragment
+import com.ssafy.chocopick.ui.home.store.StoreMapFragment
+import kotlinx.coroutines.launch
 
 
 private const val ARG_PARAM1 = "param1"
@@ -22,6 +31,10 @@ class HomeFragment : Fragment() {
 
     private var param1: String? = null
     private var param2: String? = null
+
+    private val selectedStoreVM : SelectedStoreViewModel by activityViewModels {
+        SelectedStoreViewModelFactory(app = requireActivity().application, uid = FirebaseAuth.getInstance().currentUser?.uid.orEmpty())
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +58,8 @@ class HomeFragment : Fragment() {
         binding.storeChoiceBtn.setOnClickListener {
             showStoreChoiceDialog()
         }
+
+        setUpStoreText()
     }
     fun showStoreChoiceDialog(){
         val items = arrayOf("매장에서 선택", "목록에서 선택")
@@ -54,17 +69,32 @@ class HomeFragment : Fragment() {
                 when(which) {
                     0 -> {
                         parentFragmentManager.beginTransaction()
-                            .replace(R.id.fragment_container,StoreMapFragment()).addToBackStack(null)
+                            .replace(R.id.fragment_container, StoreMapFragment()).addToBackStack(null)
                             .commit()
                     }
                     1 -> {
                         parentFragmentManager.beginTransaction()
-                            .replace(R.id.fragment_container,StoreListFragment()).addToBackStack(null)
+                            .replace(R.id.fragment_container, StoreListFragment()).addToBackStack(null)
                             .commit()
                     }
                 }
             }
             .show()
+    }
+
+    fun setUpStoreText(){
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
+                selectedStoreVM.selectedStore.collect { store ->
+                    if (store == null) {
+                        binding.tvSelectedStore.text = "아직 선택된 매장이 없어요"
+                    } else {
+                        binding.tvSelectedStore.text = "📍 ${store.name} 선택됨"
+                    }
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {

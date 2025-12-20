@@ -156,6 +156,17 @@
                 android:textColor="@color/bg_surface"
                 app:cornerRadius="16dp"
                 android:backgroundTint="@color/choco_primary"/>
+
+            <TextView
+                android:id="@+id/tvSelectedStore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="아직 선택된 매장이 없어요"
+                android:textSize="13sp"
+                android:textColor="@color/text_secondary"
+                android:drawableStart="@drawable/ic_location_small"
+                android:drawablePadding="6dp"/>
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>

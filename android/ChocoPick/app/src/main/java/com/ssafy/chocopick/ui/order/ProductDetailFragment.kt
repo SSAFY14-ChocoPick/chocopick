@@ -14,6 +14,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
 import com.ssafy.chocopick.R
 import com.ssafy.chocopick.data.model.Product
 import com.ssafy.chocopick.databinding.FragmentProductDetailBinding
@@ -31,7 +32,9 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
     private var _binding : FragmentProductDetailBinding? = null
     private val binding get() = _binding!!
 
-    private val cartViewModel : CartViewModel by activityViewModels()
+    private val cartViewModel : CartViewModel by activityViewModels{
+        CartViewModelFactory(requireActivity().application, FirebaseAuth.getInstance().currentUser!!.uid)
+    }
 
     companion object {
         @JvmStatic

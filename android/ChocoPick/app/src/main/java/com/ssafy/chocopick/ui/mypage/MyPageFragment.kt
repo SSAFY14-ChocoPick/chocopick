@@ -15,6 +15,7 @@ import com.ssafy.chocopick.databinding.FragmentMyPageBinding
 import com.ssafy.chocopick.ui.auth.AuthViewModel
 import com.ssafy.chocopick.ui.auth.AuthViewModelFactory
 import com.ssafy.chocopick.ui.auth.LoginActivity
+import com.ssafy.chocopick.ui.order.ServiceLocator
 import com.ssafy.chocopick.util.UiState
 import kotlinx.coroutines.launch
 
@@ -71,6 +72,7 @@ class MyPageFragment : Fragment() {
             val intent = Intent(requireContext(), LoginActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
+            ServiceLocator.clearCartRepository()
             startActivity(intent)
         }
 

@@ -9,6 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
 import com.ssafy.chocopick.databinding.FragmentCartBinding
 import kotlinx.coroutines.launch
 
@@ -18,7 +19,9 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
     private val binding get() = _binding!!
 
     // ✅ ProductDetailFragment와 "같은" CartViewModel을 보려면 activityViewModels
-    private val cartViewModel: CartViewModel by activityViewModels()
+    private val cartViewModel: CartViewModel by activityViewModels{
+        CartViewModelFactory(requireActivity().application, FirebaseAuth.getInstance().currentUser!!.uid)
+    }
 
     private val cartAdapter = CartAdapter(
         onPlus = { productId -> cartViewModel.increase(productId) },

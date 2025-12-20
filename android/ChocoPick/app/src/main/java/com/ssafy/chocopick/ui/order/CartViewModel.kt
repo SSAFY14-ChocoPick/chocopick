@@ -8,37 +8,39 @@ import com.ssafy.chocopick.util.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class CartViewModel() : ViewModel() {
+class CartViewModel(
+    private val repo : CartRepository
+) : ViewModel() {
     private val _cartItems = MutableStateFlow<List<CartItem>>(emptyList())
     val cartItems : StateFlow<List<CartItem>> = _cartItems
 
     fun addToCart(product: Product, qty: Int) {
-        CartRepository.add(product, qty)
+        repo.add(product, qty)
         refresh()
     }
 
     fun increase(productId: String) {
-        CartRepository.increase(productId)
+        repo.increase(productId)
         refresh()
     }
 
     fun decrease(productId: String) {
-        CartRepository.decrease(productId)
+        repo.decrease(productId)
         refresh()
     }
 
     fun remove(productId: String) {
-        CartRepository.remove(productId)
+        repo.remove(productId)
         refresh()
     }
 
     fun clear() {
-        CartRepository.clear()
+        repo.clear()
         refresh()
     }
 
     fun refresh() {
-        _cartItems.value = CartRepository.getItems()
+        _cartItems.value = repo.getItems()
     }
 
     fun totalPrice(): Int =

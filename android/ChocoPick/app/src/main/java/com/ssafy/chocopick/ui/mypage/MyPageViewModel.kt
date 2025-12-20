@@ -1,5 +1,6 @@
 package com.ssafy.chocopick.ui.mypage
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssafy.chocopick.data.model.Order
@@ -13,6 +14,8 @@ import com.ssafy.chocopick.util.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+
+private const val TAG = "MyPageViewModel"
 
 class MyPageViewModel(
     private val authRepository: AuthRepository,
@@ -30,6 +33,8 @@ class MyPageViewModel(
             _userState.value = UiState.Error("로그인이 필요합니다.")
             return
         }
+
+        Log.d(TAG, "func loadMyProfile / uid: $uid")
 
         _userState.value = UiState.Loading
         viewModelScope.launch {
@@ -54,14 +59,18 @@ class MyPageViewModel(
             return
         }
 
+        Log.d(TAG, "func loadReward / uid: $uid")
+
         _rewardState.value = UiState.Loading
         viewModelScope.launch {
             runCatching { rewardRepository.getReward(uid) }
                 .onSuccess { reward ->
+                    Log.d(TAG, "func loadReward / success")
                     if (reward == null) _rewardState.value = UiState.Error("리워드 정보 없음")
                     else _rewardState.value = UiState.Success(reward)
                 }
                 .onFailure { e ->
+                    Log.d(TAG, "func loadReward / fail")
                     _rewardState.value = UiState.Error(e.message ?: "리워드 로드 실패", e)
                 }
         }
@@ -84,6 +93,7 @@ class MyPageViewModel(
             _recentOrderState.value = UiState.Error("로그인 필요")
             return
         }
+        Log.d(TAG, "func loadRecentOrder / uid: $uid")
 
         viewModelScope.launch {
             runCatching {

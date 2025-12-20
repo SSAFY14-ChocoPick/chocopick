@@ -2,11 +2,16 @@ package com.ssafy.chocopick.ui.mypage
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.ssafy.chocopick.data.repository.AuthRepository
 import com.ssafy.chocopick.data.repository.AuthRepositoryImpl
+import com.ssafy.chocopick.data.repository.CouponRepository
+import com.ssafy.chocopick.data.repository.CouponRepositoryImpl
 import com.ssafy.chocopick.data.repository.OrderRepositoryImpl
+import com.ssafy.chocopick.data.repository.RewardRepository
 import com.ssafy.chocopick.data.repository.RewardRepositoryImpl
 import com.ssafy.chocopick.data.repository.UserRepositoryImpl
 import com.ssafy.chocopick.data.source.firebase.auth.FirebaseAuthDataSource
+import com.ssafy.chocopick.data.source.firebase.realtime.CouponDataSource
 import com.ssafy.chocopick.data.source.firebase.realtime.OrderDataSource
 import com.ssafy.chocopick.data.source.firebase.realtime.RewardDataSource
 import com.ssafy.chocopick.data.source.firebase.realtime.UserDataSource
@@ -15,15 +20,26 @@ class MyPageViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MyPageViewModel::class.java)) {
 
-            val authRepo = AuthRepositoryImpl(
-                authDataSource = FirebaseAuthDataSource(),
-                userDataSource = UserDataSource(),
-            )
+            // Auth
+            val authDs = FirebaseAuthDataSource()
+            val userDs = UserDataSource()
+            val authRepo: AuthRepository = AuthRepositoryImpl(authDs, userDs)
 
-            val userRepo = UserRepositoryImpl(UserDataSource())
+            // User
+            val userRepo = UserRepositoryImpl(userDs)
 
-            val rewardRepo = RewardRepositoryImpl(RewardDataSource())
-            val orderRepo = OrderRepositoryImpl(OrderDataSource())
+            // Reward
+            val rewardDs = RewardDataSource()
+            val rewardRepo: RewardRepository = RewardRepositoryImpl(rewardDs)
+
+            // Order
+            val orderDs = OrderDataSource()
+            val orderRepo = OrderRepositoryImpl(orderDs)
+
+            // Coupon
+            val couponDs = CouponDataSource()
+            val couponRepo: CouponRepository = CouponRepositoryImpl(couponDs)
+
 
             @Suppress("UNCHECKED_CAST")
             return MyPageViewModel(authRepo, userRepo, rewardRepo, orderRepo) as T

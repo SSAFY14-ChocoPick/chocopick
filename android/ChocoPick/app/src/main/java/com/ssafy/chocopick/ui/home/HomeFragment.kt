@@ -62,7 +62,7 @@ class HomeFragment : Fragment() {
         setUpStoreText()
     }
     fun showStoreChoiceDialog(){
-        val items = arrayOf("매장에서 선택", "목록에서 선택")
+        val items = arrayOf("지도에서 선택", "목록에서 선택")
         AlertDialog.Builder(requireContext())
             .setTitle("매장 선택 방식")
             .setItems(items){_,which ->

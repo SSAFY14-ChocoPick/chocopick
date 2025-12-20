@@ -1,21 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    android:padding="12dp">
+    app:cardBackgroundColor="@color/bg_surface"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="1dp"
+    app:strokeColor="@color/divider"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:padding="9dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
+        <!-- 썸네일 -->
         <ImageView
             android:id="@+id/ivThumb"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:scaleType="centerCrop" />
+            android:layout_width="84dp"
+            android:layout_height="84dp"
+            android:scaleType="centerCrop"
+            android:background="@color/bg_main"
+            android:contentDescription="@null" />
 
+        <!-- 텍스트/컨트롤 -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -28,40 +40,57 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="상품명"
-                android:textSize="16sp" />
+                android:textStyle="bold"
+                android:textSize="15sp"
+                android:textColor="@color/text_primary"
+                android:maxLines="2"
+                android:ellipsize="end"/>
 
             <TextView
                 android:id="@+id/tvUnitPrice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="단가: 0원" />
+                android:layout_marginTop="6dp"
+                android:text="단가: 0원"
+                android:textSize="13sp"
+                android:textColor="@color/text_secondary"/>
 
             <TextView
                 android:id="@+id/tvLinePrice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:text="소계: 0원"
-                android:paddingTop="4dp" />
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:textColor="@color/choco_primary"/>
 
+            <!-- 수량 + 삭제 -->
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingTop="8dp">
+                android:gravity="center_vertical">
 
+                <!-- - 버튼 (아이콘 중앙 고정) -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnMinus"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:backgroundTint="@color/choco_primary"
-                    android:text="-"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:padding="0dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
-                    android:padding="0dp"
-                    android:gravity="center"/>
+                    app:cornerRadius="12dp"
+                    app:backgroundTint="@color/choco_secondary"
+                    app:icon="@drawable/minus"
+                    app:iconTint="@android:color/white"
+                    app:iconSize="18dp"
+                    app:iconPadding="0dp"
+                    app:iconGravity="textTop"
+                    android:text="" />
 
                 <TextView
                     android:id="@+id/tvQty"
@@ -69,30 +98,59 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="1"
-                    android:textSize="16sp" />
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:textColor="@color/text_primary"/>
 
+                <!-- + 버튼 (아이콘 중앙 고정) -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnPlus"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:backgroundTint="@color/choco_primary"
-                    android:text="+"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:padding="0dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
-                    android:padding="0dp"
-                    android:gravity="center"/>
+                    app:cornerRadius="12dp"
+                    app:backgroundTint="@color/choco_secondary"
+                    app:icon="@drawable/plus"
+                    app:iconTint="@android:color/white"
+                    app:iconSize="18dp"
+                    app:iconPadding="0dp"
+                    app:iconGravity="textTop"
+                    android:text="" />
 
-                <Button
+                <!-- spacer -->
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1"/>
+
+                <!-- 삭제 버튼 (안 잘리게 고정폭 + 패딩/최소폭 제거) -->
+                <!-- 삭제 버튼 (아이콘 전용, 가운데 정렬) -->
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnRemove"
-                    android:layout_width="wrap_content"
+                    android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_marginStart="8dp"
-                    android:text="삭제" />
+                    android:padding="0dp"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:text=""
+                    app:cornerRadius="12dp"
+                    app:backgroundTint="@color/bg_surface"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/divider"
+                    app:icon="@drawable/ic_trash"
+                    app:iconTint="@color/text_secondary"
+                    app:iconSize="18dp"
+                    app:iconPadding="0dp"
+                    app:iconGravity="textTop" />
             </LinearLayout>
-
         </LinearLayout>
+
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

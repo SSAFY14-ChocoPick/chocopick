@@ -144,6 +144,7 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
                             currentProduct = p
 
                             binding.productNameTv.text = "제품명 : ${p.name}"
+                            binding.productIdTv.text = "상품 ID : ${p.productId}"
                             binding.productPriceTv.text = "가격 : ${p.price}원"
                             binding.productWeightTv.text = "총 내용량 : ${p.weight}"
                             binding.productTypeTv.text = "식품의 유형 : ${p.type}"

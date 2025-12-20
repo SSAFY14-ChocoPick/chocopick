@@ -35,8 +35,7 @@
             android:id="@+id/rvProducts"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:clipToPadding="false"/>
+            android:layout_weight="1"/>
     </LinearLayout>
 
     <ProgressBar
@@ -52,11 +51,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="0dp"
-        android:text="장바구니"
+
         android:textColor="@android:color/white"
         app:icon="@drawable/ic_nav_order"
         app:iconTint="@android:color/white"
-        app:backgroundTint="@color/choco_primary"
-        tools:ignore="ContentDescription" />
+        app:backgroundTint="@color/choco_primary"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

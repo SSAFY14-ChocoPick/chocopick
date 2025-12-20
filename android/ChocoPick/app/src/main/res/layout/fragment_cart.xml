@@ -1,9 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cartRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:background="@color/bg_main">
+
+    <!-- ✅ 내용 있을 때: 스크롤 영역 -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:padding="9dp"
+        android:paddingBottom="110dp">
+
+        <LinearLayout
+            android:id="@+id/contentGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 타이틀 -->
+            <TextView
+                android:id="@+id/tvCartTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="장바구니"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:textColor="@color/text_primary"
+                android:paddingBottom="5dp"/>
+
+            <!-- 리스트 -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvCart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"/>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <!-- ✅ 비어있을 때 -->
     <LinearLayout
@@ -12,58 +50,111 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical"
+        android:padding="24dp"
         android:visibility="gone">
 
         <TextView
+            android:id="@+id/tvEmptyTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="장바구니가 비어있어요."
-            android:textSize="18sp" />
-    </LinearLayout>
-
-    <!-- ✅ 내용 있을 때 -->
-    <LinearLayout
-        android:id="@+id/contentGroup"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvCart"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"/>
 
         <TextView
-            android:id="@+id/tvTotalPrice"
-            android:layout_width="match_parent"
+            android:id="@+id/tvEmptyDesc"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="합계: 0원"
-            android:textSize="18sp"
-            android:paddingTop="12dp"
-            android:paddingBottom="12dp" />
+            android:layout_marginTop="8dp"
+            android:text="원하는 상품을 담아보세요!"
+            android:textSize="14sp"
+            android:textColor="@color/text_secondary"/>
+    </LinearLayout>
+
+    <!-- ✅ 하단 고정 바 -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:cardCornerRadius="18dp"
+        app:cardBackgroundColor="@color/bg_surface"
+        android:layout_margin="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:padding="9dp"
+            android:orientation="vertical">
 
-            <Button
-                android:id="@+id/btnClear"
-                android:layout_width="0dp"
+            <!-- 총액 -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="비우기" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp">
 
-            <Button
-                android:id="@+id/btnOrder"
-                android:layout_width="0dp"
+                <TextView
+                    android:id="@+id/tvTotalLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="총액"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_secondary"/>
+
+                <TextView
+                    android:id="@+id/tvTotalPrice"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="0원"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="@color/text_primary"/>
+            </LinearLayout>
+
+            <!-- 버튼 영역 -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="8dp"
-                android:text="주문하기" />
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnClear"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:text="비우기"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    app:cornerRadius="14dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/divider"
+                    app:backgroundTint="@color/bg_surface"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnOrder"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
+                    android:text="주문하기"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    app:cornerRadius="14dp"
+                    app:backgroundTint="@color/choco_primary"/>
+            </LinearLayout>
+
         </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
 
-    </LinearLayout>
-
-</FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

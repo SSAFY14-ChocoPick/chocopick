@@ -40,6 +40,7 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
 
         collectCart()
 
+
         // ✅ 화면 들어왔을 때 최신 값 반영
         cartViewModel.refresh()
     }

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="cart_scroll_extra_bottom">12dp</dimen>
+</resources>

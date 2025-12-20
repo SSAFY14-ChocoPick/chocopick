@@ -33,6 +33,17 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentCartBinding.bind(view)
 
+        // bottomBar 높이만큼 scrollView paddingBottom 동적 적용
+        binding.bottomBar.post {
+            val barH = binding.bottomBar.height
+            binding.scrollView.setPadding(
+                binding.scrollView.paddingLeft,
+                binding.scrollView.paddingTop,
+                binding.scrollView.paddingRight,
+                barH + resources.getDimensionPixelSize(R.dimen.cart_scroll_extra_bottom)
+            )
+        }
+
         binding.rvCart.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = cartAdapter

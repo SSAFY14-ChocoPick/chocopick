@@ -81,7 +81,10 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
         setUpAddToCartClick()
 
         collectProduct() //상품 정보 로드
+        collectReview()
+
         viewModel.loadProductDetail(productId)
+        viewModel.loadReviewStats(productId)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -178,6 +181,23 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
                         is UiState.Error -> {
                             Toast.makeText(requireContext(),state.message,Toast.LENGTH_SHORT).show()
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun collectReview() { // 너가 만든 함수명 유지(내용만 교체)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.reviewStatsState.collect { state ->
+                    when (state) {
+                        is UiState.Success -> {
+                            val s = state.data
+                            binding.tvReviewAvg.text = String.format("%.1f", s.avgRating)
+                            binding.tvReviewCount.text = "(${s.reviewCount})"
+                        }
+                        else -> Unit
                     }
                 }
             }

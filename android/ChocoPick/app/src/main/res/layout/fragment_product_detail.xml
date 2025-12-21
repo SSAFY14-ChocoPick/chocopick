@@ -36,7 +36,7 @@
                     android:contentDescription="@null" />
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- ✅ 상품 기본 정보 카드 (이름/가격/ID) -->
+            <!-- ✅ 상품 기본 정보 카드 (이름/가격/ID + 리뷰) -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -82,10 +82,85 @@
                         android:textColor="@color/text_secondary"
                         android:maxLines="1"
                         android:ellipsize="end" />
+
+                    <!-- ✅ divider -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="12dp"
+                        android:background="@color/divider" />
+
+                    <!-- ✅ 리뷰 요약 + 버튼 (실사용 앱 스타일) -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <!-- 왼쪽: 별점 요약 -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <ImageView
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:src="@drawable/ic_star_on"
+                                android:contentDescription="@null"
+                                app:tint="@color/choco_primary" />
+
+                            <TextView
+                                android:id="@+id/tvReviewAvg"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:text="0.0"
+                                android:textStyle="bold"
+                                android:textSize="14sp"
+                                android:textColor="@color/text_primary" />
+
+                            <TextView
+                                android:id="@+id/tvReviewCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:text="(0)"
+                                android:textSize="13sp"
+                                android:textColor="@color/text_secondary" />
+                        </LinearLayout>
+
+                        <!-- 오른쪽: 리뷰 보러가기 -->
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnGoReviews"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:text="리뷰 보러가기"
+                            android:textStyle="bold"
+                            android:textSize="13sp"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:minWidth="0dp"
+                            android:minHeight="0dp"
+                            android:paddingStart="14dp"
+                            android:paddingEnd="14dp"
+                            app:cornerRadius="12dp"
+                            app:strokeWidth="1dp"
+                            app:strokeColor="@color/divider"
+                            app:backgroundTint="@color/bg_surface"
+                            android:textColor="@color/text_primary"
+                            app:iconTint="@color/text_secondary"
+                            app:iconPadding="6dp"
+                            app:iconGravity="textEnd" />
+                    </LinearLayout>
+
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- ✅ 상세 정보 카드 (weight/type/manufacturer/origin) -->
+            <!-- ✅ 상세 정보 카드 -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -117,7 +192,6 @@
                         android:layout_marginBottom="10dp"
                         android:background="@color/divider" />
 
-                    <!-- ✅ weight -->
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -142,7 +216,6 @@
                         android:layout_marginBottom="10dp"
                         android:background="@color/divider" />
 
-                    <!-- ✅ type -->
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -167,7 +240,6 @@
                         android:layout_marginBottom="10dp"
                         android:background="@color/divider" />
 
-                    <!-- ✅ manufacturer -->
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -192,7 +264,6 @@
                         android:layout_marginBottom="10dp"
                         android:background="@color/divider" />
 
-                    <!-- ✅ origin -->
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -213,7 +284,6 @@
             </com.google.android.material.card.MaterialCardView>
 
             <!-- ✅ 수량 조절 -->
-            <!-- ✅ 수량 조절 -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -231,7 +301,6 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <!-- ➖ 버튼 -->
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/btnMinus"
                         android:layout_width="44dp"
@@ -253,7 +322,6 @@
                             app:tint="@android:color/white" />
                     </com.google.android.material.card.MaterialCardView>
 
-                    <!-- 수량 -->
                     <TextView
                         android:id="@+id/tvQty"
                         android:layout_width="0dp"
@@ -265,7 +333,6 @@
                         android:textStyle="bold"
                         android:textColor="@color/text_primary" />
 
-                    <!-- ➕ 버튼 -->
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/btnPlus"
                         android:layout_width="44dp"

@@ -18,6 +18,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.ssafy.chocopick.R
 import com.ssafy.chocopick.data.model.Product
 import com.ssafy.chocopick.databinding.FragmentProductDetailBinding
+import com.ssafy.chocopick.ui.common.CurrentUserViewModel
+import com.ssafy.chocopick.ui.common.CurrentUserViewModelFactory
+import com.ssafy.chocopick.ui.review.ReviewsFragment
 import com.ssafy.chocopick.util.UiState
 import kotlinx.coroutines.launch
 
@@ -32,6 +35,9 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
     private var _binding : FragmentProductDetailBinding? = null
     private val binding get() = _binding!!
 
+    private val currentUserVm: CurrentUserViewModel by activityViewModels {
+        CurrentUserViewModelFactory()
+    }
     private val cartViewModel : CartViewModel by activityViewModels{
         CartViewModelFactory(requireActivity().application, FirebaseAuth.getInstance().currentUser!!.uid)
     }
@@ -60,12 +66,25 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentProductDetailBinding.bind(view)
+        binding.btnGoReviews.setOnClickListener {
+            val nickname = currentUserVm.getNickname()
 
+            parentFragmentManager.beginTransaction()
+                .replace(
+                    R.id.fragment_container,
+                    ReviewsFragment.newInstance(productId, nickname)
+                )
+                .addToBackStack("REVIEWS")
+                .commit()
+        }
         setupQtyUi()
         setUpAddToCartClick()
 
         collectProduct() //상품 정보 로드
+        collectReview()
+
         viewModel.loadProductDetail(productId)
+        viewModel.loadReviewStats(productId)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -162,6 +181,23 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
                         is UiState.Error -> {
                             Toast.makeText(requireContext(),state.message,Toast.LENGTH_SHORT).show()
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun collectReview() { // 너가 만든 함수명 유지(내용만 교체)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.reviewStatsState.collect { state ->
+                    when (state) {
+                        is UiState.Success -> {
+                            val s = state.data
+                            binding.tvReviewAvg.text = String.format("%.1f", s.avgRating)
+                            binding.tvReviewCount.text = "(${s.reviewCount})"
+                        }
+                        else -> Unit
                     }
                 }
             }

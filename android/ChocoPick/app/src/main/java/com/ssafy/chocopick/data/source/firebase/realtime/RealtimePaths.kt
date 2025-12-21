@@ -8,6 +8,7 @@ object RealtimePaths {
     const val USER_ORDERS = "userOrders"   // 인덱스: userOrders/{uid}/{orderId}=true
     const val REWARDS = "rewards"          // rewards/{uid} = Reward
     const val COUPONS = "coupons"          // coupons/{uid}/{couponId} = Coupon
-    const val REVIEWS = "reviews"
+    const val REVIEWS = "reviews"              // /reviews/{productId}/{reviewId}
+    const val PRODUCT_REVIEW_STATS = "reviewStats" // /reviewStats/{productId}
     const val PRODUCTS = "products"
 }

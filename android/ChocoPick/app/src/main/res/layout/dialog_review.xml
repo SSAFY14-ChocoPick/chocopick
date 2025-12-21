@@ -3,31 +3,123 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@color/bg_main">
 
-    <RatingBar
-        android:id="@+id/rbInput"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:numStars="5"
-        android:stepSize="0.5"
-        android:rating="5.0" />
-
+    <!-- 타이틀 -->
     <TextView
-        android:id="@+id/tvRating"
+        android:id="@+id/tvTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:text="5.0"
-        android:textStyle="bold" />
+        android:text="리뷰 작성"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="@color/text_primary" />
 
-    <EditText
-        android:id="@+id/etContent"
+    <TextView
+        android:id="@+id/tvSub"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="별점과 후기를 남겨주세요"
+        android:textSize="13sp"
+        android:textColor="@color/text_secondary" />
+
+    <!-- 별점 카드 -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:minLines="4"
-        android:hint="리뷰를 작성해 주세요"
-        android:gravity="top"
-        android:inputType="textMultiLine" />
+        android:orientation="vertical"
+        android:padding="14dp"
+        android:background="@color/bg_surface">
+
+        <!-- 라벨 + 점수 배지 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="별점"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:textColor="@color/text_primary"/>
+
+            <!-- 점수 배지 느낌 -->
+            <TextView
+                android:id="@+id/tvRating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="6dp"
+                android:text="5.0"
+                android:textStyle="bold"
+                android:textSize="13sp"
+                android:textColor="@android:color/white"
+                android:background="@color/choco_primary"/>
+        </LinearLayout>
+
+        <RatingBar
+            android:id="@+id/rbInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:numStars="5"
+            android:stepSize="0.5"
+            android:rating="5.0" />
+
+        <TextView
+            android:id="@+id/tvHint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="0.5점 단위로 평가할 수 있어요"
+            android:textSize="12sp"
+            android:textColor="@color/text_secondary"/>
+    </LinearLayout>
+
+    <!-- 내용 카드 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="vertical"
+        android:padding="14dp"
+        android:background="@color/bg_surface">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="리뷰 내용"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:textColor="@color/text_primary"/>
+
+        <EditText
+            android:id="@+id/etContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:minLines="4"
+            android:padding="12dp"
+            android:hint="맛, 포장 상태, 픽업 경험 등을 자유롭게 적어주세요"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/disabled"
+            android:gravity="top"
+            android:inputType="textMultiLine"
+            android:background="@android:color/transparent" />
+
+        <!-- 입력창 아래 구분선 -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="6dp"
+            android:background="@color/divider"/>
+    </LinearLayout>
+
 </LinearLayout>

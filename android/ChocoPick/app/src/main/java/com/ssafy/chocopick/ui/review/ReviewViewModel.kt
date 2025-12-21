@@ -1,5 +1,6 @@
 package com.ssafy.chocopick.ui.review
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssafy.chocopick.data.model.Review
@@ -10,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+private const val TAG = "ReviewViewModel"
 class ReviewViewModel(
     private val reviewRepository: ReviewRepository
 ) : ViewModel() {
@@ -65,12 +67,12 @@ class ReviewViewModel(
             runCatching { reviewRepository.upsertReview(review) }
                 .onSuccess {
                     onDone?.invoke()
-                    // 화면 최신화
                     loadStats(review.productId)
                     loadReviews(review.productId)
+                    loadMyReview(review.productId, review.uid)
                 }
-                .onFailure {
-                    // 필요하면 별도 이벤트로 토스트 처리
+                .onFailure { e ->
+                    _reviewsState.value = UiState.Error(e.message ?: "리뷰 저장 실패", e)
                 }
         }
     }
@@ -84,8 +86,8 @@ class ReviewViewModel(
                     loadReviews(productId)
                     loadMyReview(productId, myUid)
                 }
-                .onFailure {
-                    // 필요하면 별도 이벤트
+                .onFailure { e ->
+                    _reviewsState.value = UiState.Error(e.message ?: "리뷰 삭제 실패", e)
                 }
         }
     }

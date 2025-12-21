@@ -1,6 +1,7 @@
 package com.ssafy.chocopick.ui.review
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -18,7 +19,7 @@ import kotlinx.coroutines.launch
 
 private const val ARG_PRODUCT_ID = "productId"
 private const val ARG_MY_NICKNAME = "myNickname"
-
+private const val TAG = "ReviewsFragment"
 class ReviewsFragment : Fragment(R.layout.fragment_reviews) {
 
     companion object {
@@ -52,10 +53,21 @@ class ReviewsFragment : Fragment(R.layout.fragment_reviews) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentReviewsBinding.bind(view)
 
-        // ✅ back 구현
+        // ✅ back
         binding.btnBack.setOnClickListener {
             parentFragmentManager.popBackStack()
-            // 또는 requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+
+        // ✅ Dialog 결과 수신(정석)
+        parentFragmentManager.setFragmentResultListener(
+            ReviewEditDialogFragment.REQ_KEY,
+            viewLifecycleOwner
+        ) { _, bundle ->
+            val review = ReviewEditDialogFragment.readResult(bundle)
+            Log.d("TAG", "review dialog에서 받아옴 $review")
+            vm.upsert(review) {
+                Toast.makeText(requireContext(), "리뷰 저장 완료", Toast.LENGTH_SHORT).show()
+            }
         }
 
         binding.rvReviews.layoutManager = LinearLayoutManager(requireContext())
@@ -63,7 +75,6 @@ class ReviewsFragment : Fragment(R.layout.fragment_reviews) {
 
         collect()
 
-        // ✅ 안전장치: productId 비면 바로 종료
         if (productId.isBlank()) {
             Toast.makeText(requireContext(), "productId가 비어있어요.", Toast.LENGTH_SHORT).show()
             parentFragmentManager.popBackStack()
@@ -72,7 +83,10 @@ class ReviewsFragment : Fragment(R.layout.fragment_reviews) {
 
         vm.load(productId, myUid)
 
+        // 작성 버튼
         binding.fabWrite.setOnClickListener {
+            Log.d("TAG", "review: fabWrite 누름 myUid: $myUid, myNickname: $myNickname")
+
             val dialog = ReviewEditDialogFragment.newInstance(
                 ReviewEditDialogFragment.Args(
                     productId = productId,
@@ -80,11 +94,7 @@ class ReviewsFragment : Fragment(R.layout.fragment_reviews) {
                     myNickname = myNickname,
                     existing = null
                 )
-            ) { review ->
-                vm.upsert(review) {
-                    Toast.makeText(requireContext(), "리뷰 저장 완료", Toast.LENGTH_SHORT).show()
-                }
-            }
+            )
             dialog.show(parentFragmentManager, "REVIEW_WRITE")
         }
     }
@@ -97,11 +107,7 @@ class ReviewsFragment : Fragment(R.layout.fragment_reviews) {
                 myNickname = myNickname,
                 existing = existing
             )
-        ) { review ->
-            vm.upsert(review) {
-                Toast.makeText(requireContext(), "리뷰 수정 완료", Toast.LENGTH_SHORT).show()
-            }
-        }
+        )
         dialog.show(parentFragmentManager, "REVIEW_EDIT")
     }
 
@@ -117,13 +123,10 @@ class ReviewsFragment : Fragment(R.layout.fragment_reviews) {
 
                 launch {
                     vm.statsState.collect { state ->
-                        when (state) {
-                            is UiState.Success -> {
-                                val s = state.data
-                                binding.tvAvg.text = String.format("%.1f", s.avgRating)
-                                binding.tvCount.text = "(${s.reviewCount})"
-                            }
-                            else -> Unit
+                        if (state is UiState.Success) {
+                            val s = state.data
+                            binding.tvAvg.text = String.format("%.1f", s.avgRating)
+                            binding.tvCount.text = "(${s.reviewCount})"
                         }
                     }
                 }

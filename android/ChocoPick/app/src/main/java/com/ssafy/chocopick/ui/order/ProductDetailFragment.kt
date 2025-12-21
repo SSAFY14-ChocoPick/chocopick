@@ -18,6 +18,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.ssafy.chocopick.R
 import com.ssafy.chocopick.data.model.Product
 import com.ssafy.chocopick.databinding.FragmentProductDetailBinding
+import com.ssafy.chocopick.ui.common.CurrentUserViewModel
+import com.ssafy.chocopick.ui.common.CurrentUserViewModelFactory
 import com.ssafy.chocopick.ui.review.ReviewsFragment
 import com.ssafy.chocopick.util.UiState
 import kotlinx.coroutines.launch
@@ -33,6 +35,9 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
     private var _binding : FragmentProductDetailBinding? = null
     private val binding get() = _binding!!
 
+    private val currentUserVm: CurrentUserViewModel by activityViewModels {
+        CurrentUserViewModelFactory()
+    }
     private val cartViewModel : CartViewModel by activityViewModels{
         CartViewModelFactory(requireActivity().application, FirebaseAuth.getInstance().currentUser!!.uid)
     }
@@ -62,8 +67,13 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentProductDetailBinding.bind(view)
         binding.btnGoReviews.setOnClickListener {
+            val nickname = currentUserVm.getNickname()
+
             parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, ReviewsFragment.newInstance(productId, /*myNickname*/ ""))
+                .replace(
+                    R.id.fragment_container,
+                    ReviewsFragment.newInstance(productId, nickname)
+                )
                 .addToBackStack("REVIEWS")
                 .commit()
         }

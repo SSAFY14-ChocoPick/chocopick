@@ -1,10 +1,12 @@
 package com.ssafy.chocopick.data.source.firebase.realtime
 
+import android.util.Log
 import com.ssafy.chocopick.data.model.Review
 import com.ssafy.chocopick.data.model.ReviewStats
 import kotlinx.coroutines.tasks.await
 import kotlin.math.round
 
+private const val TAG = "ReviewDataSource"
 class ReviewDataSource(
     private val db: RealtimeDbClient = RealtimeDbClient()
 ) {
@@ -13,10 +15,9 @@ class ReviewDataSource(
     private fun reviewPath(productId: String, reviewId: String) = "${RealtimePaths.REVIEWS}/$productId/$reviewId"
     private fun statsPath(productId: String) = "${RealtimePaths.PRODUCT_REVIEW_STATS}/$productId"
 
-    private fun normalizeRating(rating: Float): Double {
-        // 0.5 단위로 반올림 + 범위 제한
-        val clamped = rating.coerceIn(0.0F, 5.0F)
-        val halfStep = round(clamped * 2) / 2.0
+    private fun normalizeRating(rating: Float): Float {
+        val clamped = rating.coerceIn(0.0f, 5.0f)
+        val halfStep = round(clamped * 2f) / 2f
         return halfStep
     }
 
@@ -37,42 +38,39 @@ class ReviewDataSource(
     }
 
     suspend fun getMyReview(productId: String, uid: String): Review? {
-        // RealtimeDB는 복잡한 where가 약해서: 일단 limit로 가져와서 uid로 필터
-        // (리뷰가 매우 많아지면 별도 인덱스(유저리뷰맵) 추천)
         val list = getReviews(productId, limit = 200)
         return list.firstOrNull { it.uid == uid }
     }
 
+    /**
+     * ✅ 여러 개 작성 허용:
+     * - input.reviewId가 비어있으면 항상 "새 리뷰"로 pushKey 생성해서 저장
+     * - 수정은 reviewId가 있는 경우에만 가능
+     */
     suspend fun upsertReview(input: Review): Review {
         require(input.productId.isNotBlank()) { "productId is blank" }
         require(input.uid.isNotBlank()) { "uid is blank" }
         require(input.nickname.isNotBlank()) { "nickname is blank" }
 
         val now = System.currentTimeMillis()
-        val rating: Float = normalizeRating(input.rating).toFloat()
+        val fixedRating: Float = normalizeRating(input.rating)
 
         val isNew = input.reviewId.isBlank()
         val reviewId = if (isNew) db.pushKey(reviewsPath(input.productId)) else input.reviewId
 
-        // 기존 리뷰가 있으면 stats 보정(수정/신규 구분 필요)
-        val before = if (isNew) null else db.get(reviewPath(input.productId, reviewId))
-            .getValue(Review::class.java)
+        val before: Review? = if (isNew) null
+        else db.get(reviewPath(input.productId, reviewId)).getValue(Review::class.java)
 
         val review = input.copy(
             reviewId = reviewId,
-            rating = rating,
-            createdAt = if (isNew) now else input.createdAt.takeIf { it > 0 } ?: now,
+            rating = fixedRating,
+            createdAt = if (isNew) now else (before?.createdAt ?: input.createdAt).takeIf { it > 0L } ?: now,
             updatedAt = now
         )
 
-        // ✅ 멀티 업데이트 (review + stats 동시 반영)
-        val updates = mutableMapOf<String, Any?>(
-            reviewPath(review.productId, reviewId) to review
-        )
-
-        // stats 계산
-        val statsSnap = db.get(statsPath(review.productId))
-        val curStats = statsSnap.getValue(ReviewStats::class.java) ?: ReviewStats(productId = review.productId)
+        val curStats = db.get(statsPath(review.productId))
+            .getValue(ReviewStats::class.java)
+            ?: ReviewStats(productId = review.productId)
 
         val newStats = if (before == null) {
             val newSum = curStats.ratingSum + review.rating
@@ -92,9 +90,13 @@ class ReviewDataSource(
             )
         }
 
-        updates[statsPath(review.productId)] = newStats
+        db.update(
+            mapOf(
+                reviewPath(review.productId, reviewId) to review,
+                statsPath(review.productId) to newStats
+            )
+        )
 
-        db.update(updates)
         return review
     }
 
@@ -105,13 +107,13 @@ class ReviewDataSource(
         val beforeSnap = db.get(reviewPath(productId, reviewId))
         val before = beforeSnap.getValue(Review::class.java) ?: return
 
-        // ✅ 내 리뷰만 삭제 가능
         if (before.uid != uid) {
             throw IllegalAccessException("본인 리뷰만 삭제할 수 있습니다.")
         }
 
         val statsSnap = db.get(statsPath(productId))
-        val curStats = statsSnap.getValue(ReviewStats::class.java) ?: ReviewStats(productId = productId)
+        val curStats = statsSnap.getValue(ReviewStats::class.java)
+            ?: ReviewStats(productId = productId)
 
         val newCnt = (curStats.reviewCount - 1).coerceAtLeast(0)
         val newSum = (curStats.ratingSum - before.rating).coerceAtLeast(0.0)

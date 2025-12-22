@@ -28,13 +28,10 @@
         android:background="@color/bg_surface"
         app:itemBackground="@null"
         app:itemIconTint="@color/nav_item_color"
-
         app:itemRippleColor="@null"
         app:itemTextColor="@color/nav_item_color"
-
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
-
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

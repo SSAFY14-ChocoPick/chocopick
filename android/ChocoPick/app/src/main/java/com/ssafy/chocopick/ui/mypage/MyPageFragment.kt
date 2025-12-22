@@ -82,7 +82,7 @@ class MyPageFragment : Fragment() {
         }
 
         // 1) 프로필 카드(내 정보 수정) -> EditProfileFragment
-        binding.cardProfile.setOnClickListener {
+        binding.sectionProfile.setOnClickListener {
             navigate(EditProfileFragment(), "EDIT_PROFILE")
         }
 
@@ -92,7 +92,7 @@ class MyPageFragment : Fragment() {
         }
 
         // 3) 가장 최근 주문 1개 클릭 -> OrderDetailFragment
-        binding.cardOrderItem1.setOnClickListener {
+        binding.orderItem1.setOnClickListener {
             recentOrderId?.let { orderId ->
                 navigate(
                     OrderDetailFragment.newInstance(orderId),
@@ -183,7 +183,7 @@ class MyPageFragment : Fragment() {
                             val order = state.data
                             recentOrderId = order.orderId
 
-                            binding.cardOrderItem1.visibility = View.VISIBLE
+                            binding.orderItem1.visibility = View.VISIBLE
                             binding.tvEmptyOrders.visibility = View.GONE
 
                             binding.tvOrderStore1.text = order.storeId
@@ -193,7 +193,7 @@ class MyPageFragment : Fragment() {
                             binding.tvOrderPrice1.text = "₩ ${order.totalPrice}"
                         }
                         else -> {
-                            binding.cardOrderItem1.visibility = View.GONE
+                            binding.orderItem1.visibility = View.GONE
                             binding.tvEmptyOrders.visibility = View.VISIBLE
                         }
                     }

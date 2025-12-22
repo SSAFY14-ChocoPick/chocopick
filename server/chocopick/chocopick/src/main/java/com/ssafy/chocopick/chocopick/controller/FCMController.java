@@ -85,3 +85,11 @@ public class FCMController {
         return ResponseEntity.ok("OK scheduled (0s/10s/20s)");
     }
 }
+
+
+
+
+/*curl -X POST "http://localhost:8080/api/test/fcm/delayed" ^
+-H "Content-Type: application/json" ^
+-d "{\"token\":\"eyapnsnwRNyEwF6JFlxuNN:APA91bEZs6N3_Wo425dWmTCbYOw1a47v7RXyNkIUW4iSfdK8Igf6e3jZZNX_nM-Gwbk9F607Dcpr9aISLWRLbhHZxs48YODFDufYMBaU4OM8QGJHHR8ilyI\",\"title\":\"주문완료\",\"body\":\"테스트입니다\"}"
+*/

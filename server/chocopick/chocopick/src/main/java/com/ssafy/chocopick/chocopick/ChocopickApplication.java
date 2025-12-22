@@ -6,11 +6,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableScheduling
 @SpringBootApplication(scanBasePackages = "com.ssafy.chocopick")
-
 public class ChocopickApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(ChocopickApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(ChocopickApplication.class, args);
+    }
 }

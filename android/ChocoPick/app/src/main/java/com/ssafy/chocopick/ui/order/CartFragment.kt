@@ -71,6 +71,10 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
             }
         }
 
+        binding.btnClear.setOnClickListener {
+            cartViewModel.clear()
+        }
+
         collectCart()
 
 

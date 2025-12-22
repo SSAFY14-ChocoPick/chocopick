@@ -4,69 +4,77 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_main"
-    android:padding="0dp">
+    android:background="@color/bg_main">
 
-    <!-- Header -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardHeader"
+    <!-- ===================== -->
+    <!-- Header (플랫) -->
+    <!-- ===================== -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="22dp"
-        app:cardElevation="4dp"
-        app:cardBackgroundColor="@color/bg_surface"
-        app:strokeColor="@color/divider"
-        app:strokeWidth="1dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="14dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/ic_previous"
+            android:contentDescription="back"
+            app:tint="@color/text_primary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:text="즐겨찾는 매장"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="@color/text_primary"
+            android:layout_marginStart="10dp"
+            app:layout_constraintStart_toEndOf="@id/btnBack"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <ImageView
-                android:id="@+id/btnBack"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:src="@drawable/ic_previous"
-                android:contentDescription="back"
-                app:tint="@color/text_primary"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+    <!-- Header Divider -->
+    <View
+        android:id="@+id/dividerHeader"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/divider"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-            <TextView
-                android:id="@+id/tvTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="즐겨찾는 매장"
-                android:textStyle="bold"
-                android:textSize="18sp"
-                android:textColor="@color/text_primary"
-                android:layout_marginStart="10dp"
-                app:layout_constraintStart_toEndOf="@id/btnBack"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
-
+    <!-- ===================== -->
     <!-- Favorites list -->
+    <!-- ===================== -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvFavoriteStores"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="12dp"
         android:clipToPadding="false"
         android:paddingBottom="12dp"
-        app:layout_constraintTop_toBottomOf="@id/cardHeader"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/dividerHeader"
         app:layout_constraintBottom_toTopOf="@id/btnAddFavorite"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Add button -->
+    <!-- ===================== -->
+    <!-- Add button (Bottom) -->
+    <!-- ===================== -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnAddFavorite"
         android:layout_width="0dp"
@@ -76,6 +84,8 @@
         android:textColor="@color/bg_surface"
         android:backgroundTint="@color/choco_primary"
         app:cornerRadius="16dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>

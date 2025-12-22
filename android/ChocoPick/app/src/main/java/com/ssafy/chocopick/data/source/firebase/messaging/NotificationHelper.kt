@@ -9,7 +9,7 @@ import androidx.core.app.NotificationCompat
 import com.ssafy.chocopick.R
 
 object NotificationHelper {
-    private const val CHANNEL_ID = "chocopick"
+    private const val CHANNEL_ID = "chocopick_fcm_v2"
 
     fun show(context: Context, title: String, body: String) {
         val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -25,6 +25,9 @@ object NotificationHelper {
             .setContentTitle(title)
             .setContentText(body)
             .setAutoCancel(true)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setDefaults(NotificationCompat.DEFAULT_ALL)
+            .setCategory(NotificationCompat.CATEGORY_MESSAGE)
             .build()
 
         nm.notify((System.currentTimeMillis() % 100000).toInt(), noti)

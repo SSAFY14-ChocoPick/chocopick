@@ -1,6 +1,7 @@
 package com.ssafy.chocopick.ui.order
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.Toast
@@ -80,6 +81,7 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
                         Toast.makeText(requireContext(), "Spring 요청 성공! (0/10/20초 알림)", Toast.LENGTH_SHORT).show()
                     }.onFailure { e ->
                         Toast.makeText(requireContext(), "Spring 요청 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+                        Log.d("FCMTest","${e.message}")
                     }
                 }
             }

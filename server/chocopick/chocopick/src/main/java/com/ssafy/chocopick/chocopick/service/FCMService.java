@@ -11,6 +11,8 @@ public class FCMService {
     public String sendToToken(String token, String title, String body) throws Exception {
         Message message = Message.builder()
                 .setToken(token)
+                .putData("title", title)
+                .putData("body", body)
                 .setNotification(
                         Notification.builder()
                                 .setTitle(title)

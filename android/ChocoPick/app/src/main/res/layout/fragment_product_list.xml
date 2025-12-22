@@ -20,11 +20,67 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:paddingTop="16dp"
-            android:paddingBottom="10dp"
+            android:paddingBottom="5dp"
             android:text="메뉴"
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="@color/text_primary" />
+
+        <!-- ✅ 여기 추가 -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardStoreBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            app:cardBackgroundColor="@color/bg_surface"
+            app:strokeColor="@color/divider">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="9dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="수령 매장"
+                        android:textStyle="bold"
+                        android:textSize="13sp"
+                        android:textColor="@color/text_secondary"/>
+
+                    <TextView
+                        android:id="@+id/tvSelectedStore"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="매장 선택이 안됐습니다."
+                        android:textSize="15sp"
+                        android:textColor="@color/text_primary"
+                        android:drawableStart="@drawable/outline_add_location_24"
+                        android:drawablePadding="6dp"/>
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/store_choice_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:text="매장 선택하기"
+                    android:textColor="@android:color/white"
+                    app:cornerRadius="12dp"
+                    android:backgroundTint="@color/choco_primary"/>
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
         <View
             android:layout_width="match_parent"
@@ -51,7 +107,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="0dp"
-
         android:textColor="@android:color/white"
         app:icon="@drawable/ic_nav_order"
         app:iconTint="@android:color/white"

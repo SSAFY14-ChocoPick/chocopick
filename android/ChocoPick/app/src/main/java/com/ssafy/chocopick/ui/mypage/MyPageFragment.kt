@@ -19,6 +19,8 @@ import com.ssafy.chocopick.ui.auth.LoginActivity
 import com.ssafy.chocopick.ui.order.ServiceLocator
 import com.ssafy.chocopick.util.UiState
 import kotlinx.coroutines.launch
+import java.text.DecimalFormat
+
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -174,24 +176,42 @@ class MyPageFragment : Fragment() {
 
     private var recentOrderId: String? = null
 
+
     private fun collectRecentOrder() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 myPageViewModel.recentOrderState.collect { state ->
                     when (state) {
                         is UiState.Success -> {
-                            val order = state.data
+                            val orderWithStore = state.data
+                            val order = orderWithStore.order
                             recentOrderId = order.orderId
 
                             binding.orderItem1.visibility = View.VISIBLE
                             binding.tvEmptyOrders.visibility = View.GONE
 
-                            binding.tvOrderStore1.text = order.storeId
+                            // ✅ storeId → storeName
+                            binding.tvOrderStore1.text =
+                                orderWithStore.storeName.ifBlank { orderWithStore.storeId }
+
                             binding.tvOrderStatus1.text = order.status
-                            binding.tvOrderMenu1.text = order.items.keys.joinToString()
-                            binding.tvOrderDate1.text = "2025.12.19" // format
-                            binding.tvOrderPrice1.text = "₩ ${order.totalPrice}"
+
+                            binding.tvOrderMenu1.text =
+                                order.items.joinToString(", ") { it.name }
+
+                            binding.tvOrderDate1.text =
+                                myPageViewModel.formatOrderDate(order.orderDate)
+
+                            binding.tvOrderPrice1.text =
+                                "₩ ${DecimalFormat("#,###").format(order.totalPrice)}"
                         }
+
+                        is UiState.Loading -> {
+                            binding.orderItem1.visibility = View.GONE
+                            binding.tvEmptyOrders.visibility = View.VISIBLE
+                            // 로딩 UI가 있으면 여기서 처리 (없으면 무시 가능)
+                        }
+
                         else -> {
                             binding.orderItem1.visibility = View.GONE
                             binding.tvEmptyOrders.visibility = View.VISIBLE

@@ -4,13 +4,15 @@ object RealtimePaths {
     const val USERS = "users"
     const val STORES = "stores"
     const val FAVORITES = "favorites"
-    const val ORDERS = "orders"
-    const val USER_ORDERS = "userOrders"   // 인덱스: userOrders/{uid}/{orderId}=true
-    const val REWARDS = "rewards"          // rewards/{uid} = Reward
-    const val COUPONS = "coupons"          // coupons/{uid}/{couponId} = Coupon
-    const val REVIEWS = "reviews"              // /reviews/{productId}/{reviewId}
-    const val PRODUCT_REVIEW_STATS = "reviewStats" // /reviewStats/{productId}
+
+    // ✅ 주문 경로 (너의 DB 구조)
+    const val ALL_ORDERS = "all_orders"              // /all_orders/{orderId} = Order
+    const val ORDERS_EACH_USER = "orders_eachUser"   // /orders_eachUser/{uid}/{orderId} = Order
+
+    const val REWARDS = "rewards"
+    const val COUPONS = "coupons"
+    const val REVIEWS = "reviews"
+    const val PRODUCT_REVIEW_STATS = "reviewStats"
     const val PRODUCTS = "products"
     const val RECOMMEND_PRODUCT = "recommendProduct"
-
 }

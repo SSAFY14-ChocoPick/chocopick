@@ -223,7 +223,6 @@
                 android:id="@+id/sectionRecentOrders"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="170dp"
                 android:padding="18dp"
                 android:orientation="vertical">
 
@@ -271,7 +270,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingTop="12dp"
-                        android:paddingBottom="12dp">
+                        android:paddingBottom="0dp">
 
                         <TextView
                             android:id="@+id/tvOrderStore1"
@@ -368,7 +367,8 @@
                 android:text="내 메뉴"
                 android:textColor="@color/text_primary"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:padding="5dp"/>
 
             <TextView
                 android:id="@+id/tvMenuCoupons"

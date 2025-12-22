@@ -6,13 +6,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.ssafy.chocopick.data.model.Order
+import com.ssafy.chocopick.data.model.OrderWithStore
 import com.ssafy.chocopick.databinding.ItemOrderBinding
 import java.text.DecimalFormat
 
 
 class OrdersAdapter(
-    private val onClick: (Order) -> Unit
-) : ListAdapter<Order, OrdersAdapter.VH>(diff) {
+    private val onClick: (OrderWithStore) -> Unit
+) : ListAdapter<OrderWithStore, OrdersAdapter.VH>(diff) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val binding = ItemOrderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -25,33 +26,44 @@ class OrdersAdapter(
 
     class VH(
         private val binding: ItemOrderBinding,
-        private val onClick: (Order) -> Unit
+        private val onClick: (OrderWithStore) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: Order) = with(binding) {
-            // 🔥 storeName이 없으니 일단 storeId 표시 (나중에 store 매핑하면 여기만 바꾸면 됨)
-            tvStore.text = item.storeId.ifBlank { "매장" }
+        fun bind(item: OrderWithStore) = with(binding) {
+            tvStore.text = item.storeName.ifBlank { item.storeId }
+            tvStatus.text = item.order.status
 
-            tvStatus.text = item.status
-
-            // createdAt → 날짜 문자열
             tvDate.text = java.text.SimpleDateFormat("yyyy.MM.dd HH:mm", java.util.Locale.KOREA)
-                .format(java.util.Date(item.createdAt))
+                .format(java.util.Date(item.order.orderDate))
 
-            tvPrice.text = "₩ ${DecimalFormat("#,###").format(item.totalPrice)}"
+//            tvSummary.text = item.order.items
+//                .joinToString(" + ") { "${it.name} x${it.quantity}" }
+//                .ifBlank { "주문 상품 없음" }
+            tvSummary.text = when (item.order.items.size) {
+                0 -> "주문 상품 없음"
+                1 -> item.order.items.first().name
+                else -> {
+                    val first = item.order.items.first().name
+                    val rest = item.order.items.size - 1
+                    "$first 외 ${rest}개"
+                }
+            }
+
+            tvPrice.text = "₩ ${DecimalFormat("#,###").format(item.order.totalPrice)}"
 
             root.setOnClickListener { onClick(item) }
         }
     }
 
     companion object {
-        private val diff = object : DiffUtil.ItemCallback<Order>() {
-            override fun areItemsTheSame(oldItem: Order, newItem: Order) =
+        private val diff = object : DiffUtil.ItemCallback<OrderWithStore>() {
+            override fun areItemsTheSame(oldItem: OrderWithStore, newItem: OrderWithStore) =
                 oldItem.orderId == newItem.orderId
 
-            override fun areContentsTheSame(oldItem: Order, newItem: Order) =
+            override fun areContentsTheSame(oldItem: OrderWithStore, newItem: OrderWithStore) =
                 oldItem == newItem
         }
     }
 }
+
 

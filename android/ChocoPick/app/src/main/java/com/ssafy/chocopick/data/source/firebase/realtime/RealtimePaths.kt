@@ -11,4 +11,6 @@ object RealtimePaths {
     const val REVIEWS = "reviews"              // /reviews/{productId}/{reviewId}
     const val PRODUCT_REVIEW_STATS = "reviewStats" // /reviewStats/{productId}
     const val PRODUCTS = "products"
+    const val RECOMMEND_PRODUCT = "recommendProduct"
+
 }

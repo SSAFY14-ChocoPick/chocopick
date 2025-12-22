@@ -1,96 +1,95 @@
 package com.ssafy.chocopick.ui.home
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.google.firebase.auth.FirebaseAuth
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.ssafy.chocopick.R
 import com.ssafy.chocopick.databinding.FragmentHomeBinding
-import com.ssafy.chocopick.ui.home.store.SelectedStoreViewModel
-import com.ssafy.chocopick.ui.home.store.SelectedStoreViewModelFactory
-import com.ssafy.chocopick.ui.home.store.StoreListFragment
-import com.ssafy.chocopick.ui.home.store.StoreMapFragment
+import com.ssafy.chocopick.ui.common.CurrentUserViewModel
+import com.ssafy.chocopick.ui.common.CurrentUserViewModelFactory
+import com.ssafy.chocopick.util.UiState
 import kotlinx.coroutines.launch
-
-
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
 
 class HomeFragment : Fragment() {
 
-    private var _binding : FragmentHomeBinding? = null
+    private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private var param1: String? = null
-    private var param2: String? = null
+    private val homeVM: HomeViewModel by viewModels { HomeViewModelFactory() }
 
-    private val selectedStoreVM : SelectedStoreViewModel by activityViewModels {
-        SelectedStoreViewModelFactory(app = requireActivity().application, uid = FirebaseAuth.getInstance().currentUser?.uid.orEmpty())
-    }
+    // ✅ FirebaseAuth 직접 접근 대신 CurrentUserViewModel 사용
+    private val currentUserVM: CurrentUserViewModel by viewModels { CurrentUserViewModelFactory() }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var recommendAdapter: RecommendAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_home, container, false)
-    }
+    ): View = inflater.inflate(R.layout.fragment_home, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         _binding = FragmentHomeBinding.bind(view)
-        binding.storeChoiceBtn.setOnClickListener {
-            showStoreChoiceDialog()
-        }
 
-        setUpStoreText()
+        setupRecommend()
+        collectRecommend()
+        collectCurrentUser()
+
+        // ✅ 유저 로드 (nickname 가져오려고)
+        currentUserVM.loadMe()
+
+        // ✅ 추천 로드
+        homeVM.loadRecommendTop4()
     }
-    fun showStoreChoiceDialog(){
-        val items = arrayOf("지도에서 선택", "목록에서 선택")
-        AlertDialog.Builder(requireContext())
-            .setTitle("매장 선택 방식")
-            .setItems(items){_,which ->
-                when(which) {
-                    0 -> {
-                        parentFragmentManager.beginTransaction()
-                            .replace(R.id.fragment_container, StoreMapFragment()).addToBackStack(null)
-                            .commit()
-                    }
-                    1 -> {
-                        parentFragmentManager.beginTransaction()
-                            .replace(R.id.fragment_container, StoreListFragment()).addToBackStack(null)
-                            .commit()
+
+    private fun collectCurrentUser() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                currentUserVM.userState.collect { state ->
+                    when (state) {
+                        is UiState.Success -> {
+                            val nickname = state.data.nickname.takeIf { it.isNotBlank() } ?: "회원"
+                            binding.tvWelcome.text = "${nickname}님, 환영합니다 👋"
+                        }
+                        is UiState.Error -> {
+                            // 로그인 안 됐거나 유저 정보 없을 때 fallback
+                            binding.tvWelcome.text = "로딩중..."
+                        }
+                        else -> { /* Idle/Loading은 그대로 두기 */ }
                     }
                 }
             }
-            .show()
+        }
     }
 
-    fun setUpStoreText(){
+    private fun setupRecommend() {
+        recommendAdapter = RecommendAdapter { item ->
+            // TODO: 상세로 이동 (productId 전달)
+            // findNavController().navigate(R.id.productDetailFragment, bundleOf("productId" to item.productId))
+        }
 
+        binding.rvRecommend.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.rvRecommend.adapter = recommendAdapter
+    }
+
+    private fun collectRecommend() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED){
-                selectedStoreVM.selectedStore.collect { store ->
-                    if (store == null) {
-                        binding.tvSelectedStore.text = "아직 선택된 매장이 없어요"
-                    } else {
-                        binding.tvSelectedStore.text = "📍 ${store.name} 선택됨"
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                homeVM.recommendState.collect { state ->
+                    when (state) {
+                        is UiState.Success -> recommendAdapter.submitList(state.data)
+                        is UiState.Error -> {
+                            // TODO: 토스트/스낵바 처리 원하면 여기
+                        }
+                        else -> {}
                     }
                 }
             }
@@ -100,17 +99,5 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
-
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            HomeFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
     }
 }

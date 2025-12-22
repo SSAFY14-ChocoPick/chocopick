@@ -96,7 +96,7 @@ class ProductListFragment : Fragment(R.layout.fragment_product_list) {
                     if (store == null) {
                         binding.tvSelectedStore.text = "아직 선택된 매장이 없어요"
                     } else {
-                        binding.tvSelectedStore.text = "📍 ${store.name} 선택됨"
+                        binding.tvSelectedStore.text = "${store.name}"
                     }
                 }
             }

@@ -1,6 +1,7 @@
 package com.ssafy.chocopick.ui.home
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.ssafy.chocopick.R
@@ -12,19 +13,30 @@ class StampAdapter(
     filled: Int
 ) : RecyclerView.Adapter<StampAdapter.VH>() {
 
-    private var filledCount: Int = min(filled, total)
+    private var filledCount = min(filled, total)
 
-    inner class VH(private val binding: ItemStampBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class VH(private val binding: ItemStampBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
         fun bind(position: Int) {
             val isFilled = position < filledCount
-            binding.ivStamp.setImageResource(
-                if (isFilled) R.drawable.ic_stamp_full else R.drawable.ic_stamp_empty
-            )
+
+            if (isFilled) {
+                binding.root.background =
+                    binding.root.context.getDrawable(R.drawable.bg_stamp_filled)
+                binding.ivStamp.visibility = View.VISIBLE
+            } else {
+                binding.root.background =
+                    binding.root.context.getDrawable(R.drawable.bg_stamp_empty)
+                binding.ivStamp.visibility = View.GONE
+            }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-        val binding = ItemStampBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemStampBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+
         return VH(binding)
     }
 
@@ -39,3 +51,4 @@ class StampAdapter(
         notifyDataSetChanged()
     }
 }
+

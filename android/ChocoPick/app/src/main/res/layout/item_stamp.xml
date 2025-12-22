@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="0dp"
-    android:layout_height="48dp"
-    android:layout_margin="6dp">
+    android:layout_width="44dp"
+    android:layout_height="44dp"
+    android:layout_margin="4dp"
+    android:background="@drawable/bg_stamp_empty"
+    android:clipToOutline="true">
 
     <ImageView
         android:id="@+id/ivStamp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_stamp_empty"
+        android:scaleType="centerCrop"
+        android:src="@drawable/chocopick_white_logo"
+        android:visibility="gone"
         android:contentDescription="stamp"/>
 </FrameLayout>

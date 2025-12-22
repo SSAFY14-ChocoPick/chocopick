@@ -15,4 +15,7 @@
     <!-- UI -->
     <color name="divider">#E0E0E0</color>
     <color name="disabled">#CCCCCC</color>
+
+    <color name="bg_stamp_surface">#FFF3EB</color>
+
 </resources>

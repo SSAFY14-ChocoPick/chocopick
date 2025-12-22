@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="cart_scroll_extra_bottom">12dp</dimen>
+    <dimen name="indicator_dot_size">6dp</dimen>
+    <dimen name="indicator_dot_margin">8dp</dimen>
 </resources>

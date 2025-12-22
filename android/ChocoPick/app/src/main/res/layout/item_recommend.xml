@@ -1,40 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="140dp"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="12dp"
-    app:cardCornerRadius="18dp"
-    app:cardBackgroundColor="@color/bg_surface"
-    app:strokeColor="@color/divider"
-    app:strokeWidth="1dp">
+    android:layout_marginEnd="14dp"
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:orientation="vertical">
+    <!-- 동그란 썸네일 -->
+    <FrameLayout
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:background="@drawable/bg_recommend_circle"
+        android:clipToOutline="true">
 
         <ImageView
             android:id="@+id/ivProduct"
             android:layout_width="match_parent"
-            android:layout_height="110dp"
+            android:layout_height="match_parent"
             android:scaleType="centerCrop"
             android:contentDescription="product"
             android:src="@drawable/chocopick_logo"/>
+    </FrameLayout>
 
-        <TextView
-            android:id="@+id/tvName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="초코 라떼"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:textColor="@color/text_primary"
-            android:maxLines="1"
-            android:ellipsize="end"/>
-    </LinearLayout>
-
-</com.google.android.material.card.MaterialCardView>
+    <!-- 아래 텍스트(작게) -->
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_width="72dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="초코 라떼"
+        android:textStyle="normal"
+        android:textSize="12sp"
+        android:textColor="@color/text_primary"
+        android:maxLines="1"
+        android:ellipsize="end"/>
+</LinearLayout>

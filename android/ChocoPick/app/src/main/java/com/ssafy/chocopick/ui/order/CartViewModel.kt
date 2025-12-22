@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import com.ssafy.chocopick.data.model.CartItem
 import com.ssafy.chocopick.data.model.Product
 import com.ssafy.chocopick.data.repository.CartRepository
-import com.ssafy.chocopick.util.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

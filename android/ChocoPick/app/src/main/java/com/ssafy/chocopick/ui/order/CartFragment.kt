@@ -34,7 +34,7 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
         CartViewModelFactory(requireActivity().application, FirebaseAuth.getInstance().currentUser!!.uid)
     }
 
-    private val SelectedstoreViewModel : SelectedStoreViewModel by activityViewModels {
+    private val SelectedStoreViewModel : SelectedStoreViewModel by activityViewModels {
         SelectedStoreViewModelFactory(requireActivity().application, Gson(), FirebaseAuth.getInstance().currentUser!!.uid)
     }
 
@@ -119,13 +119,105 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
         }
     }
 
+//    private suspend fun saveOrderToFirebase(cartItems: List<CartItem>) {
+//        val dbClient = RealtimeDbClient()  // RealtimeDbClient 인스턴스 생성
+//        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+//        val orderId = dbClient.pushKey("all_orders")  // Firebase에서 push()로 새로운 주문 ID 생성
+//
+//        // 주문 데이터 구성
+//        val orderData = hashMapOf(
+//            "userId" to userId,
+//            "items" to cartItems.map { item ->
+//                mapOf(
+//                    "productId" to item.productId,
+//                    "name" to item.name,
+//                    "price" to item.price,
+//                    "quantity" to item.quantity
+//                )
+//            },
+//            "totalPrice" to cartViewModel.totalPrice(),
+//            "orderDate" to System.currentTimeMillis(),
+//            "store" to SelectedstoreViewModel.selectedStore.value?.storeId,
+//            "status" to "주문 완료"
+//        )
+//
+//        val userOrderData: HashMap<String, Any> = hashMapOf(
+//            orderId to orderData
+//        )
+//
+//        try {
+//            // 1. 사용자별 주문 데이터 저장 (orders_eachUser)
+//            dbClient.set("orders_eachUser/$userId/$orderId", orderData)
+//
+//            // 2. 전체 주문 데이터 저장 (all_orders)
+//            dbClient.set("all_orders/$orderId", orderData)
+//
+//            // 주문 저장 후, FCM 발송 함수 호출
+//            sendFcmNotification()
+//
+//            Toast.makeText(requireContext(), "주문 저장 완료", Toast.LENGTH_SHORT).show()
+//
+//        } catch (e: Exception) {
+//            // 오류 처리
+//            Toast.makeText(requireContext(), "주문 저장 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+//            Log.e("FirebaseOrderSave", "주문 저장 실패", e)
+//        }
+//    }
+//    private fun sendFcmNotification() {
+//        FirebaseMessaging.getInstance().token
+//            .addOnSuccessListener { token ->
+//                viewLifecycleOwner.lifecycleScope.launch {
+//                    runCatching {
+//                        ApiProvider.fcmApi.sendDelayed(
+//                            FcmRequestDto(
+//                                token = token,
+//                                title = "주문 완료!",
+//                                body = "테스트 주문입니다"
+//                            )
+//                        )
+//                    }.onSuccess {
+//                        Toast.makeText(requireContext(), "Spring 요청 성공! (0/10/20초 알림)", Toast.LENGTH_SHORT).show()
+//                    }.onFailure { e ->
+//                        Toast.makeText(requireContext(), "Spring 요청 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+//                        Log.d("FCMTest","${e.message}")
+//                    }
+//                }
+//            }
+//            .addOnFailureListener { e ->
+//                Toast.makeText(requireContext(), "FCM 토큰 획득 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+//            }
+//    }
+
     private suspend fun saveOrderToFirebase(cartItems: List<CartItem>) {
-        val dbClient = RealtimeDbClient()  // RealtimeDbClient 인스턴스 생성
+        val dbClient = RealtimeDbClient()
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
-        val orderId = dbClient.pushKey("all_orders")  // Firebase에서 push()로 새로운 주문 ID 생성
+        val orderId = dbClient.pushKey("all_orders") // Generate new order ID
 
         // 주문 데이터 구성
-        val orderData = hashMapOf(
+        val orderData = createOrderData(cartItems, userId, orderId)
+
+        try {
+            // Save to "orders_eachUser" (user's orders)
+            saveUserOrder(dbClient, userId, orderId, orderData)
+
+            // Save to "all_orders" (all orders)
+            saveAllOrders(dbClient, orderId, orderData)
+
+            // Order saved successfully, send FCM notification
+            sendFcmNotification()
+            cartViewModel.clear()
+
+            Toast.makeText(requireContext(), "주문 저장 완료", Toast.LENGTH_SHORT).show()
+
+        } catch (e: Exception) {
+            Toast.makeText(requireContext(), "주문 저장 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+            Log.e("FirebaseOrderSave", "주문 저장 실패", e)
+        }
+    }
+
+    // 주문 데이터를 생성하는 함수
+    private fun createOrderData(cartItems: List<CartItem>, userId: String, orderId: String): Map<String, Any> {
+        return hashMapOf(
             "userId" to userId,
             "items" to cartItems.map { item ->
                 mapOf(
@@ -137,32 +229,22 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
             },
             "totalPrice" to cartViewModel.totalPrice(),
             "orderDate" to System.currentTimeMillis(),
-            "store" to SelectedstoreViewModel.selectedStore.value?.storeId,
+            "store" to SelectedStoreViewModel.selectedStore.value!!.storeId,
             "status" to "주문 완료"
         )
-
-        val userOrderData: HashMap<String, Any> = hashMapOf(
-            orderId to orderData
-        )
-
-        try {
-            // 1. 사용자별 주문 데이터 저장 (orders_eachUser)
-            dbClient.set("orders_eachUser/$userId/$orderId", orderData)
-
-            // 2. 전체 주문 데이터 저장 (all_orders)
-            dbClient.set("all_orders/$orderId", orderData)
-
-            // 주문 저장 후, FCM 발송 함수 호출
-            sendFcmNotification()
-
-            Toast.makeText(requireContext(), "주문 저장 완료", Toast.LENGTH_SHORT).show()
-
-        } catch (e: Exception) {
-            // 오류 처리
-            Toast.makeText(requireContext(), "주문 저장 실패: ${e.message}", Toast.LENGTH_SHORT).show()
-            Log.e("FirebaseOrderSave", "주문 저장 실패", e)
-        }
     }
+
+    // 사용자별 주문 데이터를 저장하는 함수
+    private suspend fun saveUserOrder(dbClient: RealtimeDbClient, userId: String, orderId: String, orderData: Map<String, Any>) {
+        dbClient.set("orders_eachUser/$userId/$orderId", orderData)
+    }
+
+    // 전체 주문 데이터를 저장하는 함수
+    private suspend fun saveAllOrders(dbClient: RealtimeDbClient, orderId: String, orderData: Map<String, Any>) {
+        dbClient.set("all_orders/$orderId", orderData)
+    }
+
+    // FCM 알림을 보내는 함수
     private fun sendFcmNotification() {
         FirebaseMessaging.getInstance().token
             .addOnSuccessListener { token ->
@@ -172,14 +254,14 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
                             FcmRequestDto(
                                 token = token,
                                 title = "주문 완료!",
-                                body = "테스트 주문입니다"
+                                body = "주문이 성공적으로 처리되었습니다. 곧 픽업하러 오세요!"
                             )
                         )
                     }.onSuccess {
                         Toast.makeText(requireContext(), "Spring 요청 성공! (0/10/20초 알림)", Toast.LENGTH_SHORT).show()
                     }.onFailure { e ->
                         Toast.makeText(requireContext(), "Spring 요청 실패: ${e.message}", Toast.LENGTH_SHORT).show()
-                        Log.d("FCMTest","${e.message}")
+                        Log.d("FCMTest", "${e.message}")
                     }
                 }
             }
@@ -187,7 +269,6 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
                 Toast.makeText(requireContext(), "FCM 토큰 획득 실패: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
-
 
 
     override fun onDestroyView() {

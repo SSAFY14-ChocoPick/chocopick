@@ -66,26 +66,27 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentProductDetailBinding.bind(view)
+
+        setupHeaderButtons()   // ✅ 추가
+
         binding.btnGoReviews.setOnClickListener {
             val nickname = currentUserVm.getNickname()
-
             parentFragmentManager.beginTransaction()
-                .replace(
-                    R.id.fragment_container,
-                    ReviewsFragment.newInstance(productId, nickname)
-                )
+                .replace(R.id.fragment_container, ReviewsFragment.newInstance(productId, nickname))
                 .addToBackStack("REVIEWS")
                 .commit()
         }
+
         setupQtyUi()
         setUpAddToCartClick()
 
-        collectProduct() //상품 정보 로드
+        collectProduct()
         collectReview()
 
         viewModel.loadProductDetail(productId)
         viewModel.loadReviewStats(productId)
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -203,6 +204,37 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
             }
         }
     }
+
+    private fun setupHeaderButtons() {
+        // ✅ 뒤로가기
+        binding.btnBack.setOnClickListener {
+            // 가장 안전한 "뒤로" 처리
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+
+        // ✅ 공유하기
+        binding.btnShare.setOnClickListener {
+            val p = currentProduct
+            if (p == null) {
+                Toast.makeText(requireContext(), "상품 정보를 불러오는 중이에요.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val shareText = buildString {
+                append("[ChocoPick] ${p.name}\n")
+                append("${p.price}원\n")
+                if (p.imageUrl.isNotBlank()) append(p.imageUrl)
+            }
+
+            val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(android.content.Intent.EXTRA_SUBJECT, "초코픽 상품 공유")
+                putExtra(android.content.Intent.EXTRA_TEXT, shareText)
+            }
+            startActivity(android.content.Intent.createChooser(intent, "공유하기"))
+        }
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

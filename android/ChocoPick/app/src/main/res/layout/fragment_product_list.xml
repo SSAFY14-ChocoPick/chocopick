@@ -26,61 +26,52 @@
             android:textStyle="bold"
             android:textColor="@color/text_primary" />
 
-        <!-- ✅ 여기 추가 -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardStoreBar"
+        <!-- ✅ 매장 선택 바 (카드뷰 제거: shape 배경으로 자연스럽게) -->
+        <LinearLayout
+            android:id="@+id/storeBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginEnd="5dp"
-            android:layout_marginBottom="5dp"
-            app:cardBackgroundColor="@color/bg_surface"
-            app:strokeColor="@color/divider">
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="2dp"
+            android:padding="2dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackground">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/tvSelectedStore"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:padding="2dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
+                android:layout_weight="1"
+                android:text="매장 선택이 안됐습니다."
+                android:textSize="15sp"
+                android:textColor="@color/text_primary"
+                android:drawableStart="@drawable/outline_add_location_24"
+                android:drawablePadding="6dp"
+                android:maxLines="1"
+                android:ellipsize="end"/>
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/store_choice_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="매장 선택"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                app:cornerRadius="12dp"
+                android:backgroundTint="@color/choco_primary"/>
+        </LinearLayout>
 
-<!--                    <TextView-->
-<!--                        android:layout_width="wrap_content"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:text="수령 매장"-->
-<!--                        android:textStyle="bold"-->
-<!--                        android:textSize="13sp"-->
-<!--                        android:textColor="@color/text_secondary"/>-->
-
-                    <TextView
-                        android:id="@+id/tvSelectedStore"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="매장 선택이 안됐습니다."
-                        android:textSize="15sp"
-                        android:textColor="@color/text_primary"
-                        android:drawableStart="@drawable/outline_add_location_24"
-                        android:drawablePadding="2dp"/>
-                </LinearLayout>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/store_choice_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:text="매장 선택하기"
-                    android:textColor="@android:color/white"
-                    app:cornerRadius="12dp"
-                    android:backgroundTint="@color/choco_primary"/>
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
 
         <View
             android:layout_width="match_parent"
@@ -110,6 +101,11 @@
         android:textColor="@android:color/white"
         app:icon="@drawable/ic_nav_order"
         app:iconTint="@android:color/white"
-        app:backgroundTint="@color/choco_primary"/>
+        app:backgroundTint="@color/choco_primary"
+
+        app:elevation="0dp"
+        app:pressedTranslationZ="0dp"
+        android:stateListAnimator="@null" />
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

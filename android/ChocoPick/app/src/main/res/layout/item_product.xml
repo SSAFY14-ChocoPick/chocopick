@@ -1,60 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardBackgroundColor="@color/bg_surface"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="1dp"
-    app:cardUseCompatPadding="true"
-    app:strokeColor="@color/divider"
-    app:strokeWidth="1dp">
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp"
+    android:background="?attr/selectableItemBackground">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <!-- 초코픽 크림 원 배경 -->
+    <View
+        android:id="@+id/thumbBg"
+        android:layout_width="66dp"
+        android:layout_height="66dp"
+        android:background="@drawable/bg_chocopick_thumb_circle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <!-- 원형 썸네일 -->
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/ivThumb"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:scaleType="centerCrop"
+        android:contentDescription="@null"
+        app:shapeAppearance="@style/ShapeAppearanceOverlay.ChocoPick.Circle"
+        app:layout_constraintStart_toStartOf="@id/thumbBg"
+        app:layout_constraintEnd_toEndOf="@id/thumbBg"
+        app:layout_constraintTop_toTopOf="@id/thumbBg"
+        app:layout_constraintBottom_toBottomOf="@id/thumbBg"/>
+
+    <!-- 한글 상품명 (굵게) -->
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="2dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:layout_marginStart="14dp"
+        android:text="아이스 초코픽 시그니처 라떼"
+        android:textStyle="bold"
+        android:textSize="15sp"
+        android:textColor="@color/text_primary"
+        android:maxLines="2"
+        android:ellipsize="end"
+        app:layout_constraintStart_toEndOf="@id/thumbBg"
+        app:layout_constraintTop_toTopOf="@id/thumbBg"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/ivThumb"
-            android:layout_width="92dp"
-            android:layout_height="92dp"
-            android:scaleType="centerCrop"
-            android:contentDescription="@null"
-            android:background="@color/bg_main"
-            app:shapeAppearance="@style/ShapeAppearanceChocoPickThumb" />
+    <!-- 영문/설명 (연하게) -->
+    <TextView
+        android:id="@+id/tvSub"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="ChocoPick Signature Latte"
+        android:textSize="12sp"
+        android:textColor="@color/text_secondary"
+        android:maxLines="1"
+        android:ellipsize="end"
+        app:layout_constraintStart_toStartOf="@id/tvName"
+        app:layout_constraintTop_toBottomOf="@id/tvName"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
+    <!-- 가격 (초코 포인트) -->
+    <TextView
+        android:id="@+id/tvPrice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="9,000원"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:textColor="@color/choco_primary"
+        app:layout_constraintStart_toStartOf="@id/tvName"
+        app:layout_constraintTop_toBottomOf="@id/tvSub"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-            <TextView
-                android:id="@+id/tvName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="상품명"
-                android:textColor="@color/text_primary"
-                android:textStyle="bold"
-                android:textSize="15sp"
-                android:maxLines="2"
-                android:ellipsize="end" />
+    <!-- 아래 구분선 -->
+    <View
+        android:id="@+id/divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="14dp"
+        android:background="@color/divider"
+        app:layout_constraintStart_toStartOf="@id/tvName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvPrice"/>
 
-            <TextView
-                android:id="@+id/tvPrice"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="0원"
-                android:textColor="@color/choco_primary"
-                android:textStyle="bold"
-                android:textSize="14sp" />
-        </LinearLayout>
-
-    </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

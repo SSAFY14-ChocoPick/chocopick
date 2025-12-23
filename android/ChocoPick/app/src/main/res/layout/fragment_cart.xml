@@ -88,6 +88,46 @@
             android:padding="9dp"
             android:orientation="vertical">
 
+            <!-- ✅ 주문 방식 선택(매장/픽업) -->
+            <LinearLayout
+                android:id="@+id/orderTypeGroup"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:orientation="horizontal"
+                android:padding="4dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/bg_segment_container">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnStoreOrder"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="매장 주문"
+                    android:textStyle="bold"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    app:cornerRadius="12dp"
+                    app:backgroundTint="@color/choco_primary"
+                    android:textColor="@android:color/white"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPickupOrder"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    android:text="픽업 주문"
+                    android:textStyle="bold"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    app:cornerRadius="12dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/divider"
+                    app:backgroundTint="@color/bg_surface"
+                    android:textColor="@color/text_primary"/>
+            </LinearLayout>
+
             <!-- 총액 -->
             <LinearLayout
                 android:layout_width="match_parent"

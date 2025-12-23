@@ -55,7 +55,7 @@ class ChatBotFragment : Fragment() {
         // 🤖 첫 AI 환영 메시지
         chatAdapter.submit(
             ChatMessage(
-                "안녕하세요 😊\n초콜릿이나 매장에 대해 궁금한 점을 물어보세요!",
+                "안녕하세요 😊\n초콜릿이나 dd매장에 대해 궁금한 점을 물어보세요!",
                 false
             )
         )

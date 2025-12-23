@@ -1,10 +1,11 @@
-package com.ssafy.chocopick.data.source.beacon
+package com.ssafy.chocopick.ui.common
 
+import android.app.Application
 import com.ssafy.chocopick.data.repository.BeaconRepository
-
+import com.ssafy.chocopick.data.source.beacon.AltBeaconDataSource
 
 object BeaconInjection {
-    fun provideRepo(app: android.app.Application): BeaconRepository {
+    fun provideRepo(app: Application): BeaconRepository {
         val ds = AltBeaconDataSource(app)
         return BeaconRepository(
             ds = ds,

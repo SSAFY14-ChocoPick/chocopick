@@ -6,7 +6,6 @@ import android.app.AlertDialog
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -23,10 +22,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.firebase.messaging.FirebaseMessaging
-import com.ssafy.chocopick.data.source.beacon.BeaconInjection
-import com.ssafy.chocopick.data.source.beacon.BeaconUiEvent
-import com.ssafy.chocopick.data.source.beacon.BeaconViewModel
-import com.ssafy.chocopick.data.source.beacon.BeaconViewModelFactory
+import com.ssafy.chocopick.ui.common.BeaconInjection
+import com.ssafy.chocopick.ui.common.BeaconUiEvent
+import com.ssafy.chocopick.ui.common.BeaconViewModel
+import com.ssafy.chocopick.ui.common.BeaconViewModelFactory
 import com.ssafy.chocopick.data.source.firebase.messaging.NotificationHelper
 import com.ssafy.chocopick.databinding.ActivityMainBinding
 import com.ssafy.chocopick.ui.common.CurrentUserViewModel

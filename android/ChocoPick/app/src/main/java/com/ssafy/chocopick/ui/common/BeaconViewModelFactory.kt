@@ -1,4 +1,4 @@
-package com.ssafy.chocopick.data.source.beacon
+package com.ssafy.chocopick.ui.common
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

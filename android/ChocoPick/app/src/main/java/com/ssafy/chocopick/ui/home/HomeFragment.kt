@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.ssafy.chocopick.R
 import com.ssafy.chocopick.databinding.FragmentHomeBinding
+import com.ssafy.chocopick.ui.chatbot.ChatBotFragment
 import com.ssafy.chocopick.ui.common.CurrentUserViewModel
 import com.ssafy.chocopick.ui.common.CurrentUserViewModelFactory
 import com.ssafy.chocopick.ui.mypage.RewardFragment
@@ -65,6 +66,14 @@ class HomeFragment : Fragment() {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, RewardFragment())
                 .addToBackStack("REWARD")
+                .commit()
+        }
+
+        // 🤖 AI 챗봇 FAB 클릭 → ChatBotFragment 이동
+        binding.fabChatbot.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, ChatBotFragment())
+                .addToBackStack("CHATBOT")
                 .commit()
         }
 

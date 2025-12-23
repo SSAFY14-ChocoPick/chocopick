@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#FFE8D9"/>
+
+    <!-- 카톡 느낌: 오른쪽 위만 덜 둥글게 -->
+    <corners
+        android:topLeftRadius="14dp"
+        android:topRightRadius="4dp"
+        android:bottomLeftRadius="14dp"
+        android:bottomRightRadius="14dp"/>
+</shape>

@@ -73,6 +73,8 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
 
+    implementation("org.altbeacon:android-beacon-library:2.20.6")
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

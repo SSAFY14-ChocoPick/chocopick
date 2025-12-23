@@ -21,7 +21,7 @@ object NotificationHelper {
         }
 
         val noti = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_foreground) // 너 프로젝트 아이콘으로 변경
+            .setSmallIcon(R.drawable.chocopick_logo) // 너 프로젝트 아이콘으로 변경
             .setContentTitle(title)
             .setContentText(body)
             .setAutoCancel(true)

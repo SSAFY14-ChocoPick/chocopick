@@ -222,7 +222,7 @@
             <LinearLayout
                 android:id="@+id/sectionRecentOrders"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="155dp"
                 android:padding="18dp"
                 android:orientation="vertical">
 

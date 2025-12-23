@@ -187,7 +187,7 @@ class MyPageFragment : Fragment() {
                             val order = orderWithStore.order
                             recentOrderId = order.orderId
 
-                            binding.orderItem1.visibility = View.VISIBLE
+                            binding.containerHasOrders.visibility = View.VISIBLE
                             binding.tvEmptyOrders.visibility = View.GONE
 
                             // ✅ storeId → storeName
@@ -207,13 +207,13 @@ class MyPageFragment : Fragment() {
                         }
 
                         is UiState.Loading -> {
-                            binding.orderItem1.visibility = View.GONE
+                            binding.containerHasOrders.visibility = View.GONE
                             binding.tvEmptyOrders.visibility = View.VISIBLE
                             // 로딩 UI가 있으면 여기서 처리 (없으면 무시 가능)
                         }
 
                         else -> {
-                            binding.orderItem1.visibility = View.GONE
+                            binding.containerHasOrders.visibility = View.GONE
                             binding.tvEmptyOrders.visibility = View.VISIBLE
                         }
                     }

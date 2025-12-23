@@ -7,7 +7,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 
 
 object ApiProvider {
-    private const val BASE_URL = "http://175.120.137.147:8080/" // 에뮬레이터 -> PC localhost
+    private const val BASE_URL = "http://192.168.33.124:8080/" // 에뮬레이터 -> PC localhost
     //192.168.33.123
 //    10.0.2.2:8080
     private val gson = GsonBuilder()

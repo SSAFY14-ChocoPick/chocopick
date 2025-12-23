@@ -40,7 +40,7 @@ class StoreMapFragment : Fragment(R.layout.fragment_store_map), GoogleMap.OnMark
     private var selectedOnMap : Store? = null
 
     private val storeRepo : StoreRepository by lazy {
-        StoreRepositoryImpl(ds = StoreDataSource())
+        StoreRepositoryImpl(storeDataSource = StoreDataSource())
     }
 
     private val mapVm : StoreMapViewModel by viewModels {

@@ -104,15 +104,15 @@ class ProductDetailFragment : Fragment(R.layout.fragment_product_detail) {
     private fun setUpAddToCartClick() {
         binding.btnAddToCart.setOnClickListener {
             val p = currentProduct ?: return@setOnClickListener
-            cartViewModel.addToCart(p, qty)
 
-            // ✅ 여기서 "장바구니 담기" 실제 로직 연결하면 됨
-            // 지금은 UI 플로우 먼저라 했으니, 일단 성공했다고 가정하고 다이얼로그 띄움
-            // ex) viewModel.addToCart(p.productId, qty) 같은 걸 나중에 붙이면 됨
+            Log.d("CART_TRACE", "▶ addToCart 클릭됨 productId=${p.productId}, qty=$qty")
+
+            cartViewModel.addToCart(p, qty)
 
             showGoToCartDialog()
         }
     }
+
 
     private fun setupQtyUi(){
         binding.tvQty.text = qty.toString()

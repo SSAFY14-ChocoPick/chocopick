@@ -4,8 +4,8 @@ import com.ssafy.chocopick.data.model.Store
 import com.ssafy.chocopick.data.source.firebase.realtime.StoreDataSource
 
 class StoreRepositoryImpl(
-    private val ds: StoreDataSource
+    private val storeDataSource: StoreDataSource
 ) : StoreRepository {
-    override suspend fun getAllStores(): List<Store> = ds.getAllStores()
-    override suspend fun getStore(storeId: String): Store? = ds.getStore(storeId)
+    override suspend fun getAllStores(): List<Store> = storeDataSource.getAllStores()
+    override suspend fun getStore(storeId: String): Store? = storeDataSource.getStore(storeId)
 }

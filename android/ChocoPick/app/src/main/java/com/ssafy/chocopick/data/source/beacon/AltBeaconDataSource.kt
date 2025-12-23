@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import org.altbeacon.beacon.Beacon
 import org.altbeacon.beacon.BeaconManager
+import org.altbeacon.beacon.Identifier
 import org.altbeacon.beacon.RangeNotifier
 import org.altbeacon.beacon.Region
 
@@ -24,7 +25,12 @@ class AltBeaconDataSource(context: Context) : BeaconDataSource {
     override fun distances() = _flow.asSharedFlow()
 
     // ✅ 비콘 1개만 쓴다 했으니 “아무 비콘이나” ranging 해서 가장 가까운 1개만 사용
-    private val region = Region("all-beacons", null, null, null)
+    private val storeRegion = Region(
+        "chocopick-store",
+        Identifier.parse("fda50693-a4e2-4fb1-afcf-c6eb07647825"),
+        Identifier.parse("10004"),
+        Identifier.parse("54480")
+    )
 
     private val notifier = RangeNotifier { beacons: Collection<Beacon>, _ ->
         val nearest = beacons.minByOrNull { it.distance } ?: return@RangeNotifier
@@ -43,13 +49,13 @@ class AltBeaconDataSource(context: Context) : BeaconDataSource {
         if (started) return
         started = true
         bm.addRangeNotifier(notifier)
-        bm.startRangingBeacons(region)
+        bm.startRangingBeacons(storeRegion)
     }
 
     override fun stop() {
         if (!started) return
         started = false
-        bm.stopRangingBeacons(region)
+        bm.stopRangingBeacons(storeRegion)
         bm.removeRangeNotifier(notifier)
     }
 }

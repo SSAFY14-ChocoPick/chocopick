@@ -239,6 +239,12 @@
         app:srcCompat="@drawable/ic_chat"
         app:tint="@android:color/white"
         android:backgroundTint="@color/choco_primary"
+
+        app:elevation="0dp"
+        android:elevation="0dp"
+        app:pressedTranslationZ="0dp"
+        android:stateListAnimator="@null"
+
         app:maxImageSize="38dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

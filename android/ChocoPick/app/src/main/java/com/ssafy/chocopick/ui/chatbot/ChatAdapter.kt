@@ -20,9 +20,8 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         notifyItemInserted(items.size - 1)
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return if (items[position].isUser) TYPE_USER else TYPE_AI
-    }
+    override fun getItemViewType(position: Int): Int =
+        if (items[position].isUser) TYPE_USER else TYPE_AI
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -37,21 +36,21 @@ class ChatAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val msg = items[position]
-        if (holder is UserVH) holder.bind(msg)
-        if (holder is AiVH) holder.bind(msg)
-    }
-
-    class UserVH(private val binding: ItemChatUserBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: ChatMessage) {
-            binding.root.findViewById<android.widget.TextView>(0).text = item.message
+        when (holder) {
+            is UserVH -> holder.bind(msg)
+            is AiVH -> holder.bind(msg)
         }
     }
 
-    class AiVH(private val binding: ItemChatAiBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    class UserVH(private val binding: ItemChatUserBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ChatMessage) {
-            binding.root.findViewById<android.widget.TextView>(0).text = item.message
+            binding.tvMessage.text = item.message
+        }
+    }
+
+    class AiVH(private val binding: ItemChatAiBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: ChatMessage) {
+            binding.tvMessage.text = item.message
         }
     }
 }

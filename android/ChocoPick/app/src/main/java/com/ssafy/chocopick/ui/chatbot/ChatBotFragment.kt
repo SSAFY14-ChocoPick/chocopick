@@ -46,12 +46,11 @@ class ChatBotFragment : Fragment() {
     private fun setupChat() {
         chatAdapter = ChatAdapter()
 
-        binding.rvChat.apply {
-            adapter = chatAdapter
-            layoutManager = LinearLayoutManager(requireContext()).apply {
-                stackFromEnd = true
-            }
+        binding.rvChat.layoutManager = LinearLayoutManager(requireContext()).apply {
+            stackFromEnd = true
         }
+        binding.rvChat.adapter = chatAdapter
+
 
         // 🤖 첫 AI 환영 메시지
         chatAdapter.submit(

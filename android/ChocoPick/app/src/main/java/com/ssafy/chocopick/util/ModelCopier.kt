@@ -5,8 +5,8 @@ import java.io.File
 
 object ModelCopier {
 
-    private const val ASSET_PATH = "models/gemma-3n-E2B-it-int4.litertlm"
-    private const val OUT_NAME = "gemma-3n-E2B-it-int4.litertlm"
+    private const val ASSET_PATH = "models/gemma3-1b-it-int4.litertlm"
+    private const val OUT_NAME = "gemma3-1b-it-int4.litertlm"
 
     fun copyIfNeeded(context: Context): File {
         val out = File(context.filesDir, OUT_NAME)

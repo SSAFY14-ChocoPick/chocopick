@@ -48,6 +48,7 @@ class ChatBotFragment : Fragment() {
         val text = binding.etMessage.text.toString().trim()
         if (text.isEmpty()) return
 
+        // 사용자 메시지 추가
         adapter.submit(ChatMessage(text, true))
         binding.etMessage.setText("")
         scroll()
@@ -59,23 +60,24 @@ class ChatBotFragment : Fragment() {
             return
         }
 
-        val history = adapter.getItems().takeLast(6).map {
-            if (it.isUser) "User" to it.message else "Assistant" to it.message
-        }
-
+        // ✅ history 제거, userInput만 전달
         Helper.chat(
-            history = history,
             userInput = text,
-            onResult = {
-                adapter.submit(ChatMessage(it, false))
-                scroll()
+            onResult = { reply ->
+                requireActivity().runOnUiThread {
+                    adapter.submit(ChatMessage(reply, false))
+                    scroll()
+                }
             },
-            onError = {
-                adapter.submit(ChatMessage("⚠️ $it", false))
-                scroll()
+            onError = { err ->
+                requireActivity().runOnUiThread {
+                    adapter.submit(ChatMessage("⚠️ $err", false))
+                    scroll()
+                }
             }
         )
     }
+
 
     private fun scroll() {
         binding.rvChat.scrollToPosition(adapter.itemCount - 1)

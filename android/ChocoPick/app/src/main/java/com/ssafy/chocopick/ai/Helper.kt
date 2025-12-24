@@ -1,3 +1,4 @@
+// app/src/main/java/com/ssafy/chocopick/ai/Helper.kt
 package com.ssafy.chocopick.ai
 
 import android.content.Context
@@ -9,12 +10,11 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 private const val TAG = "ChocoPickAI"
 
-// 안정화 설정
-private const val MAX_TOKENS = 128
+// 안정화 설정 (LLM은 "설명/추천"에만 사용)
+private const val MAX_TOKENS = 256
 private const val TOP_K = 40
 private const val TOP_P = 0.9f
 private const val TEMP = 0.7f
-private const val HISTORY_LIMIT = 6
 
 typealias OnResult = (String) -> Unit
 typealias OnError = (String) -> Unit
@@ -22,7 +22,6 @@ typealias OnError = (String) -> Unit
 object Helper {
 
     private var engine: LlmInference? = null
-    private var session: LlmInferenceSession? = null
     private val ready = AtomicBoolean(false)
 
     fun isReady(): Boolean = ready.get()
@@ -42,19 +41,11 @@ object Helper {
 
             val options = LlmInference.LlmInferenceOptions.builder()
                 .setModelPath(modelFile.absolutePath)
-                .setPreferredBackend(LlmInference.Backend.CPU) // GPU ❌
+                .setPreferredBackend(LlmInference.Backend.CPU)
                 .setMaxTokens(MAX_TOKENS)
                 .build()
 
             engine = LlmInference.createFromOptions(context, options)
-            session = LlmInferenceSession.createFromOptions(
-                engine!!,
-                LlmInferenceSession.LlmInferenceSessionOptions.builder()
-                    .setTopK(TOP_K)
-                    .setTopP(TOP_P)
-                    .setTemperature(TEMP)
-                    .build()
-            )
 
             ready.set(true)
             onReady("✅ 모델 준비 완료")
@@ -65,70 +56,105 @@ object Helper {
         }
     }
 
+    /**
+     * 1) 상품/가격/매장/주소 같은 "정확 데이터"는 ruleBasedReply로 즉시 응답 (LLM 호출 X)
+     * 2) 그 외(추천/설명/응대)만 LLM 동기 1회 호출 (안정)
+     */
     fun chat(
-        history: List<Pair<String, String>>,
         userInput: String,
         onResult: OnResult,
         onError: OnError
     ) {
-        if (!ready.get() || session == null) {
+        if (!ready.get() || engine == null) {
             onError("모델이 아직 준비되지 않았어요.")
             return
         }
 
+        val input = userInput.trim()
+        if (input.isEmpty()) return
+
+        // ✅ 정확 데이터는 코드로 바로 반환 (포맷 100% 보장)
+        ruleBasedReply(input)?.let { onResult(it); return }
+
+        // ✅ 그 외만 LLM
         try {
-            val prompt = buildPrompt(history, userInput)
-            session!!.addQueryChunk(prompt)
+            val prompt = buildPrompt(input)
 
-            session!!.generateResponseAsync { partial, done ->
-                if (done) onResult(partial)
-            }
-
-        } catch (t: Throwable) {
-            Log.e(TAG, "chat error", t)
-            onError("추론 실패: ${t.message}")
-            resetSession()
-        }
-    }
-
-    private fun resetSession() {
-        try {
-            val e = engine ?: return
-            session?.close()
-            session = LlmInferenceSession.createFromOptions(
-                e,
+            val localSession = LlmInferenceSession.createFromOptions(
+                engine!!,
                 LlmInferenceSession.LlmInferenceSessionOptions.builder()
                     .setTopK(TOP_K)
                     .setTopP(TOP_P)
                     .setTemperature(TEMP)
                     .build()
             )
-        } catch (_: Throwable) {}
+
+            localSession.addQueryChunk(prompt)
+            val text = localSession.generateResponse().trim()
+
+            try { localSession.close() } catch (_: Throwable) {}
+
+            if (text.isBlank()) onError("응답이 비어있어요.")
+            else onResult(text)
+
+        } catch (t: Throwable) {
+            Log.e(TAG, "chat error", t)
+            onError("추론 실패: ${t.message}")
+        }
     }
 
-    private fun buildPrompt(
-        history: List<Pair<String, String>>,
-        userInput: String
-    ): String {
-        fun cut(s: String, n: Int) = if (s.length <= n) s else s.take(n)
+    // ------------------------
+    // Rule-based (정확 데이터 응답)
+    // ------------------------
+    private fun ruleBasedReply(input: String): String? {
+        val q = input.replace(" ", "")
 
-        val safeHistory = history.takeLast(HISTORY_LIMIT)
-        val safeInput = cut(userInput.replace(Regex("\\s+"), " "), 120)
-
-        val sb = StringBuilder()
-        sb.appendLine("System: 너는 ChocoPick 매장 안내 챗봇이야. 한국어로 짧게 답해.")
-        for ((who, text) in safeHistory) {
-            sb.appendLine("$who: ${cut(text, 200)}")
+        // 강남점 주소 / 홍대점 주소 등
+        if (q.contains("주소") && q.contains("점")) {
+            val storeKey = extractStoreKey(q) // "강남점"
+            val addr = HardcodedContext.findStoreAddress(storeKey)
+            return if (addr != null) "$storeKey - $addr" else "해당 매장을 찾지 못했어요."
         }
-        sb.appendLine("User: $safeInput")
-        sb.append("Assistant: ")
-        return sb.toString()
+
+        // 매장 전부
+        if (q.contains("매장") || q.contains("지점") || q.contains("매장정보") || q.contains("어디있")) {
+            return HardcodedContext.allStoresText()
+        }
+
+        // 가격 전부
+        if (q.contains("가격") || q.contains("얼마") || q.contains("원")) {
+            return HardcodedContext.allProductPricesText()
+        }
+
+        // 상품 목록 전부
+        if (q.contains("상품") || q.contains("메뉴") || q.contains("뭐있")) {
+            return HardcodedContext.allProductNamesText()
+        }
+
+        return null
+    }
+
+    private fun extractStoreKey(noSpace: String): String {
+        // "강남점주소알려줘" -> "강남점"
+        val idx = noSpace.indexOf("점")
+        return if (idx != -1) noSpace.substring(0, idx + 1) else noSpace
+    }
+
+    // ------------------------
+    // LLM prompt (짧게, 설명/추천용)
+    // ------------------------
+    private fun buildPrompt(userInput: String): String {
+        val input = userInput.replace(Regex("\\s+"), " ").take(120)
+        return buildString {
+            appendLine("System: 너는 ChocoPick 안내 챗봇이야. 한국어로 2~3문장으로만 짧게 답해.")
+            appendLine("System: 상품/가격/매장 목록은 앱이 직접 제공하니, 너는 설명/추천/응대만 해.")
+            appendLine("User: $input")
+            appendLine("Assistant:")
+        }
     }
 
     fun close() {
-        try { session?.close() } catch (_: Throwable) {}
         try { engine?.close() } catch (_: Throwable) {}
-        session = null
         engine = null
         ready.set(false)
     }

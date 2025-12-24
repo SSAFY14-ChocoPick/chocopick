@@ -22,17 +22,17 @@ class OrderViewModel(
 
     private val _orderState = MutableStateFlow<UiState<Unit>>(UiState.Idle)
     val orderState: StateFlow<UiState<Unit>> = _orderState
-
     fun placeOrder(
         cartItems: List<CartItem>,
-        storeId: String
+        storeId: String,
+        orderType: String,
+        tableNo: Int?
     ) {
         val uid = FirebaseAuth.getInstance().currentUser?.uid
         if (uid.isNullOrBlank()) {
             _orderState.value = UiState.Error("로그인이 필요합니다.")
             return
         }
-
         if (cartItems.isEmpty()) {
             _orderState.value = UiState.Error("장바구니가 비어있습니다.")
             return
@@ -41,15 +41,8 @@ class OrderViewModel(
         viewModelScope.launch {
             _orderState.value = UiState.Loading
 
-            runCatching {
-                val orderId = orderRepository
-                    .getOrders(uid, 1) // dummy call 제거용 아님, 아래에서 직접 pushKey 쓰는 게 더 좋음
-                // 👉 orderId는 DataSource에서 pushKey로 만드는 구조면 여기서 생성
-            }
-
-            val orderId = System.currentTimeMillis().toString() // 🔥 실무에선 pushKey로 교체 가능
-
-            val items = cartItems.mapIndexed { index, item ->
+            val orderId = System.currentTimeMillis().toString()
+            val items = cartItems.map { item ->
                 OrderItem(
                     productId = item.productId,
                     name = item.name,
@@ -57,7 +50,6 @@ class OrderViewModel(
                     quantity = item.quantity
                 )
             }
-
             val totalPrice = items.sumOf { it.price * it.quantity }
 
             val order = Order(
@@ -67,19 +59,107 @@ class OrderViewModel(
                 items = items,
                 totalPrice = totalPrice,
                 orderDate = System.currentTimeMillis(),
-                status = "주문 완료"
+                status = "주문 완료",
+                orderType = orderType,
+                tableNo = tableNo
             )
 
             runCatching {
                 orderRepository.upsertOrder(order)
             }.onSuccess {
-                sendOrderCompleteFcm()
+                // ✅ 타입별 FCM
+                if (orderType == "PICKUP") {
+                    sendPickupFcm() // 기존
+                } else {
+                    sendStoreFcm(tableNo ?: 1) // 신규
+                }
                 _orderState.value = UiState.Success(Unit)
             }.onFailure { e ->
                 _orderState.value = UiState.Error("주문 실패: ${e.message}", e)
             }
         }
     }
+
+    private suspend fun sendPickupFcm() {
+        val token = FirebaseMessaging.getInstance().token.await()
+        ApiProvider.fcmApi.sendDelayed(
+            FcmRequestDto(
+                token = token,
+                title = "주문 완료!",
+                body = "주문이 정상적으로 접수되었습니다. 픽업 준비 알림을 기다려주세요 ☕🍫"
+            )
+        )
+    }
+
+    private suspend fun sendStoreFcm(tableNo: Int) {
+        val token = FirebaseMessaging.getInstance().token.await()
+        ApiProvider.fcmApi.sendStoreDelayed(
+            FcmRequestDto(
+                token = token,
+                title = "테이블 주문",
+                body = tableNo.toString() // 서버에서 tableNo 받게 하려면 dto 확장하는 게 더 깔끔
+            )
+        )
+    }
+//    fun placeOrder(
+//        cartItems: List<CartItem>,
+//        storeId: String,
+//        orderType: String,
+//        tableNo: Int?
+//    ) {
+//        val uid = FirebaseAuth.getInstance().currentUser?.uid
+//        if (uid.isNullOrBlank()) {
+//            _orderState.value = UiState.Error("로그인이 필요합니다.")
+//            return
+//        }
+//
+//        if (cartItems.isEmpty()) {
+//            _orderState.value = UiState.Error("장바구니가 비어있습니다.")
+//            return
+//        }
+//
+//        viewModelScope.launch {
+//            _orderState.value = UiState.Loading
+//
+//            runCatching {
+//                val orderId = orderRepository
+//                    .getOrders(uid, 1) // dummy call 제거용 아님, 아래에서 직접 pushKey 쓰는 게 더 좋음
+//                // 👉 orderId는 DataSource에서 pushKey로 만드는 구조면 여기서 생성
+//            }
+//
+//            val orderId = System.currentTimeMillis().toString() // 🔥 실무에선 pushKey로 교체 가능
+//
+//            val items = cartItems.mapIndexed { index, item ->
+//                OrderItem(
+//                    productId = item.productId,
+//                    name = item.name,
+//                    price = item.price,
+//                    quantity = item.quantity
+//                )
+//            }
+//
+//            val totalPrice = items.sumOf { it.price * it.quantity }
+//
+//            val order = Order(
+//                orderId = orderId,
+//                uid = uid,
+//                store = storeId,
+//                items = items,
+//                totalPrice = totalPrice,
+//                orderDate = System.currentTimeMillis(),
+//                status = "주문 완료"
+//            )
+//
+//            runCatching {
+//                orderRepository.upsertOrder(order)
+//            }.onSuccess {
+//                sendOrderCompleteFcm()
+//                _orderState.value = UiState.Success(Unit)
+//            }.onFailure { e ->
+//                _orderState.value = UiState.Error("주문 실패: ${e.message}", e)
+//            }
+//        }
+//    }
 
     private suspend fun sendOrderCompleteFcm() {
         val token = FirebaseMessaging.getInstance().token.await()

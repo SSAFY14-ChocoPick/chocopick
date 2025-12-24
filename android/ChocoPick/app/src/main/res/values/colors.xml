@@ -19,4 +19,6 @@
     <color name="bg_stamp_surface">#FFF3EB</color>
     <color name="choco_cream">#F6F1E8</color>
 
+    <dimen name="stroke_1dp">1dp</dimen>
+
 </resources>

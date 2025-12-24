@@ -41,4 +41,14 @@ public class DelayedFcmService {
       System.out.println("[FCM] failed title=" + title + " err=" + e.getMessage());
     }
   }
+  
+  public void sendStoreOrderNowAndDelayed(String token, int tableNo) {
+	    safeSend(token, tableNo + "번 테이블 주문 접수", tableNo + "번 테이블 주문이 접수되었습니다.");
+
+	    schedule(() -> safeSend(
+	            token,
+	            tableNo + "번 테이블 고객님",
+	            "초콜릿이 준비되었습니다."
+	    ), 10);
+	}
 }

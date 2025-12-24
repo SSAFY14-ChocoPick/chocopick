@@ -3,16 +3,25 @@ package com.ssafy.chocopick.ui.order
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.ssafy.chocopick.data.model.CartItem
+import com.ssafy.chocopick.data.model.Order
 import com.ssafy.chocopick.data.model.Product
 import com.ssafy.chocopick.data.repository.CartRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
+enum class OrderType { PICKUP, STORE }
 class CartViewModel(
     private val cartRepository: CartRepository
 ) : ViewModel() {
     private val _cartItems = MutableStateFlow<List<CartItem>>(emptyList())
     val cartItems : StateFlow<List<CartItem>> = _cartItems
+
+    private val _selectedOrderType = MutableStateFlow(OrderType.PICKUP)
+    val selectedOrderType : StateFlow<OrderType> = _selectedOrderType
+
+    fun selectOrderType(type : OrderType){
+        _selectedOrderType.value = type
+    }
 
     fun addToCart(product: Product, qty: Int) {
         Log.d("CART_TRACE", "▶ VM addToCart productId=${product.productId}, qty=$qty")

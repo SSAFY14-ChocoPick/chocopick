@@ -84,6 +84,12 @@ public class FCMController {
         delayedFcmService.sendNowAndDelayed(req.getToken());
         return ResponseEntity.ok("OK scheduled (0s/10s/20s)");
     }
+    
+    @PostMapping("/fcm/storeDelayed")
+    public ResponseEntity<?> sendStoreDelayed(@RequestBody FCMRequest req) {
+        delayedFcmService.sendStoreOrderNowAndDelayed(req.getToken(), 1);
+        return ResponseEntity.ok("OK store scheduled");
+    }
 }
 
 

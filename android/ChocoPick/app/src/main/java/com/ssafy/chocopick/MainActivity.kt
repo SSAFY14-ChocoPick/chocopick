@@ -6,7 +6,10 @@ import android.app.AlertDialog
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.nfc.NfcAdapter
+import android.nfc.Tag
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -15,7 +18,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat.enableEdgeToEdge
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -30,6 +35,7 @@ import com.ssafy.chocopick.data.source.firebase.messaging.NotificationHelper
 import com.ssafy.chocopick.databinding.ActivityMainBinding
 import com.ssafy.chocopick.ui.common.CurrentUserViewModel
 import com.ssafy.chocopick.ui.common.CurrentUserViewModelFactory
+import com.ssafy.chocopick.ui.common.NfcViewModel
 import com.ssafy.chocopick.ui.home.HomeFragment
 import com.ssafy.chocopick.ui.mypage.MyPageFragment
 import com.ssafy.chocopick.ui.order.ProductListFragment
@@ -59,12 +65,14 @@ class MainActivity : AppCompatActivity() {
         ActivityResultContracts.RequestPermission()
     ) { /* granted -> 필요하면 로그/안내 */ }
 
-
+    private val nfcViewModel : NfcViewModel by viewModels()
     private var entryDialog: AlertDialog? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        Log.d("NFC_ROUTE", "MainActivity onCreate")
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -74,6 +82,7 @@ class MainActivity : AppCompatActivity() {
         currentUserVm.loadMe()
 
         collectBeaconEvents()
+        handleNfcIntent(intent)
 
         if(savedInstanceState == null){
             binding.bottomNav.selectedItemId = R.id.nav_home
@@ -104,7 +113,29 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        Log.d("NFC_ROUTE", "MainActivity onNewIntent action=${intent.action}")
 
+        setIntent(intent)
+        handleNfcIntent(intent)   // ✅ 공통 처리
+    }
+
+    private fun handleNfcIntent(intent: Intent) {
+        val action = intent.action ?: return
+
+        if (action == NfcAdapter.ACTION_TAG_DISCOVERED ||
+            action == NfcAdapter.ACTION_TECH_DISCOVERED ||
+            action == NfcAdapter.ACTION_NDEF_DISCOVERED
+        ) {
+            Log.d("NFC", "handleNfcIntent: detected action=$action")
+            nfcViewModel.onTagDetected()
+
+            // (선택) 태그 정보도 같이 쓰고 싶으면:
+            val tag: Tag? = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG)
+            Log.d("NFC", "tag=$tag")
+        }
+    }
 
     fun createFcmChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -240,160 +271,3 @@ class MainActivity : AppCompatActivity() {
 }
 
 
-
-/*
-✅ 비콘 테스트 당일 체크리스트 (실전용)
-0️⃣ 준비물 (집 나오기 전)
-
- 실기기 안드로이드폰 (에뮬레이터 ❌)
-
- 비콘 (전원 ON / 배터리 충분)
-
- nRF Connect 앱 설치
-
- ChocoPick 앱 최신 빌드 설치
-
-1️⃣ 비콘 자체 확인 (앱 실행 ❌, 먼저 이거부터)
-
-👉 이 단계에서 문제 나면 앱 테스트 의미 없음
-
-🔹 nRF Connect로 확인
-
-nRF Connect 실행
-
-Scan 시작
-
-비콘 발견
-
-비콘 클릭
-
-✅ 여기서 반드시 확인할 것
-
- iBeacon으로 표시되는지
-
- Manufacturer Data에 Apple (0x004C) + 02 15
-
- UUID / Major / Minor 값 기록 (캡처 or 메모)
-
-❌ 여기서 안 보이면
-→ 비콘 전원 / 광고 설정 / 거리 문제
-→ 앱 테스트 중단
-
-2️⃣ ChocoPick 코드에 “내 비콘” 값 고정
-
-👉 집이나 테스트 장소에서 딱 1번만 하면 됨
-
- AltBeacon Region에 UUID/Major/Minor 반영
-
- Region("target-beacon", UUID, Major, Minor) 형태 확인
-
- 빌드 & 설치
-
-3️⃣ 테스트 환경 세팅 (앱 실행 직전)
-
- 휴대폰 Bluetooth ON
-
- 휴대폰 위치(Location) ON
-
- 앱 실행 시 권한 전부 허용
-
-Android 12+: 근처 기기(BLE)
-
-Android 13+: 알림
-
-4️⃣ 로그로 “스캔이 도는지” 확인 (제일 중요)
-
-👉 알림보다 로그가 먼저
-
-Logcat 필터
-Beacon
-
-반드시 보여야 하는 로그
-
- ScanJob Lifecycle START
-
- ranged count=1 이상
-
- nearest distance=...
-
-❌ ranged count=0만 나오면
-→ 비콘이 잡히지 않는 상태
-→ 다시 1️⃣로 돌아가기
-
-5️⃣ 거리 테스트 방법 (실패 안 하는 방식)
-
-RSSI는 튀니까 이렇게 해야 성공률 높아.
-
-비콘에서 3~5m 떨어진 상태에서 시작
-
-앱 실행 (포그라운드)
-
-천천히 비콘 쪽으로 이동
-
-Logcat에서 distance 값 확인
-
-distance가 1.0 이하로 연속 찍히는지 확인
-
-6️⃣ ENTER 이벤트 확인
-
-👉 이 로그가 핵심
-
- ENTER detected distance=...
-
- emit ShowEntryNotification
-
- MainActivity received event
-
-❌ 여기까지 로그는 나오는데 알림 안 뜨면
-→ 다음 단계로
-
-7️⃣ 알림 최종 확인
-
- 알림 권한 허용돼 있는지
-
- 앱 알림 설정에서 “매장 입장 알림” 채널 ON
-
- 방해 금지 / 무음 모드 확인
-
-👉 여기까지 통과하면 100% 성공
-
-🧪 빠른 테스트용 임시 설정 (강력 추천)
-
-처음엔 조건을 느슨하게 해서 확인해.
-
- 입장 거리: 2.0m
-
- 연속 횟수: 1회
-
- 쿨다운: 5초
-
-✔️ 알림 뜨는 거 확인
-✔️ 그 다음 요구사항대로 다시 조이기
-
-🔥 테스트 실패 시 원인 분기표
-증상	원인
-nRF Connect에서도 안 보임	비콘 문제
-nRF는 보이는데 앱은 0개	UUID/Major/Minor 불일치
-distance 로그는 있음	조건/쿨다운 문제
-이벤트 로그 있음	알림 권한/채널 문제
-✅ 최종 요약 (이것만 기억해도 됨)
-
-nRF Connect로 비콘 먼저 확인
-
-UUID/Major/Minor 고정
-
-로그 → 이벤트 → 알림 순서로 확인
-
-처음엔 조건 느슨하게
-
-이따 테스트하다가
-
-로그 한 장 캡처
-
-또는 “어디 단계에서 막혔는지”
-
-만 보내주면,
-그 지점 기준으로 바로 해결책만 콕 집어서 도와줄게.
-
-
- */

@@ -16,11 +16,17 @@ class RewardRepositoryImpl(
         Log.d(TAG, "func getReward / out")
         return reward
     }
-    override suspend fun upsertReward(reward: Reward) = rewardDataSource.upsertReward(reward)
+
+    override suspend fun upsertReward(reward: Reward) =
+        rewardDataSource.upsertReward(reward)
 
     override suspend fun issueAmericanoIfPossible(uid: String) =
         rewardDataSource.issueAmericanoIfPossible(uid)
 
     override suspend fun useAmericanoIfPossible(uid: String) =
         rewardDataSource.useAmericanoIfPossible(uid)
+
+    override suspend fun applyRewardForOrderIfNeeded(uid: String, orderId: String, stampAdd: Int): Reward {
+        return rewardDataSource.applyRewardForOrderIfNeeded(uid, orderId, stampAdd)
+    }
 }

@@ -2,8 +2,16 @@ package com.ssafy.chocopick.ui.order
 
 import android.content.Context
 import com.google.gson.Gson
-import com.ssafy.chocopick.data.repository.*
+import com.ssafy.chocopick.data.repository.CartRepository
+import com.ssafy.chocopick.data.repository.CartRepositoryImpl
+import com.ssafy.chocopick.data.repository.OrderRepository
+import com.ssafy.chocopick.data.repository.OrderRepositoryImpl
+import com.ssafy.chocopick.data.repository.RewardRepository
+import com.ssafy.chocopick.data.repository.RewardRepositoryImpl
+import com.ssafy.chocopick.data.repository.StoreRepository
+import com.ssafy.chocopick.data.repository.StoreRepositoryImpl
 import com.ssafy.chocopick.data.source.firebase.realtime.OrderDataSource
+import com.ssafy.chocopick.data.source.firebase.realtime.RewardDataSource
 import com.ssafy.chocopick.data.source.firebase.realtime.StoreDataSource
 import com.ssafy.chocopick.data.source.local.CartLocalDataSource
 
@@ -12,6 +20,7 @@ object ServiceLocator {
     @Volatile private var cartRepo: CartRepository? = null
     @Volatile private var orderRepo: OrderRepository? = null
     @Volatile private var storeRepo: StoreRepository? = null
+    @Volatile private var rewardRepo: RewardRepository? = null // ✅ 추가
 
     private val gson: Gson by lazy { Gson() }
 
@@ -40,11 +49,25 @@ object ServiceLocator {
     fun provideStoreRepository(): StoreRepository {
         return storeRepo ?: synchronized(this) {
             storeRepo ?: StoreRepositoryImpl(
-                storeDataSource  = StoreDataSource()
+                storeDataSource = StoreDataSource()
             ).also { storeRepo = it }
         }
     }
 
+    // =======================
+    // RewardRepository ✅ 추가
+    // =======================
+    fun provideRewardRepository(): RewardRepository {
+        return rewardRepo ?: synchronized(this) {
+            rewardRepo ?: RewardRepositoryImpl(
+                rewardDataSource = RewardDataSource()
+            ).also { rewardRepo = it }
+        }
+    }
+
+    fun clearRewardRepository() {
+        rewardRepo = null
+    }
 
     // =======================
     // OrderRepository
@@ -57,7 +80,6 @@ object ServiceLocator {
             ).also { orderRepo = it }
         }
     }
-
 
     fun clearOrderRepository() {
         orderRepo = null

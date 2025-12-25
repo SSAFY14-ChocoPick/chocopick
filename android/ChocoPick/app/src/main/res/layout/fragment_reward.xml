@@ -202,7 +202,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    android:text="결제 단계에서 자동으로 적용돼요."
+                    android:text="매장 방문 후 직원이 ‘사용’ 버튼을 눌러 처리해요."
                     android:textSize="12sp"
                     android:textColor="@color/text_secondary"/>
             </LinearLayout>
@@ -231,15 +231,16 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:lineSpacingExtra="2dp"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            android:textSize="12sp"
+            android:text="• 멤버십 등급은 BRONZE / SILVER / GOLD로 구성돼요.\n• 주문 누적 횟수에 따라 자동으로 승급돼요.\n• 등급별 이번 달 혜택은 ‘내 멤버십’ 영역에서 확인할 수 있어요.\n\n[등급별 혜택]\n- BRONZE: 롯데 아몬드 초코볼 46g 증정\n- SILVER: 밀카 요거트 초콜릿 100g 증정\n- GOLD: 몰티져스 밀크 버켓 초콜릿 465g 증정\n\n※ 등급 혜택은 매장 방문 시 직원 확인 후 제공돼요.\n※ 재고 상황에 따라 동일 가격대 상품으로 대체될 수 있어요."
             android:textColor="@color/text_secondary"
-            android:lineSpacingExtra="2dp"
-            android:text="• 등급은 BRONZE / SILVER / GOLD로 구성돼요.\n• 주문 누적 횟수(또는 픽업 완료 기준)에 따라 자동 승급돼요.\n• 등급별 이번 달 혜택은 ‘내 멤버십’ 영역에 표시돼요.\n\n[예시 혜택]\n- BRONZE: 무료 사이즈업 1회\n- SILVER: 픽업 무료 쿠폰 1장\n- GOLD: 매장 에코(개인컵) 무료 쿠폰 1장"
-            app:layout_constraintTop_toBottomOf="@id/tvGuideTitle"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@id/tvGuideTitle" />
 
         <View
             android:id="@+id/dividerGuide"
@@ -280,7 +281,7 @@
             android:textSize="12sp"
             android:textColor="@color/text_secondary"
             android:lineSpacingExtra="2dp"
-            android:text="• 픽업 완료(PICKED_UP) 상태가 되면 스탬프가 적립돼요.\n• 기본 적립: 음료 1잔당 스탬프 1개 (정책에 따라 변경될 수 있어요)\n• 스탬프 10개 → 아메리카노 쿠폰 1장 발행\n• 발행 시: 스탬프 -10, 아메리카노 쿠폰 +1\n• 쿠폰은 결제 단계에서 1회 적용(중복 사용 불가)\n• 발행/사용 내역은 추후 ‘쿠폰 목록’에서 확인 가능해요."
+            android:text="• 주문 완료 시 스탬프가 적립돼요.\n• 적립 기준: 상품 1개(수량 1개)당 스탬프 1개\n• 스탬프 10개를 모으면 아메리카노 쿠폰 1장이 발행돼요.\n• 발행 시: 스탬프 -10, 아메리카노 쿠폰 +1\n• 아메리카노 쿠폰은 모든 ChocoPick 제휴 매장에서 사용 가능해요.\n• 쿠폰 사용 시, 매장 방문 후 직원이 ‘사용’ 버튼을 눌러 소진 처리해요.\n• 쿠폰은 서비스 아메리카노 1잔으로 제공돼요."
             app:layout_constraintTop_toBottomOf="@id/tvRulesTitle"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>

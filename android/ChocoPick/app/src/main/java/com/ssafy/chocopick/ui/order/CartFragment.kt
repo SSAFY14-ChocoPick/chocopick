@@ -1,9 +1,8 @@
-
 package com.ssafy.chocopick.ui.order
 
 import android.content.res.ColorStateList
-import android.util.Log
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -41,11 +40,15 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
         SelectedStoreViewModelFactory(requireActivity().application, Gson(), uid)
     }
 
+    // ✅ 변경: OrderViewModelFactory에 RewardRepository도 주입
     private val orderViewModel: OrderViewModel by activityViewModels {
-        OrderViewModelFactory(ServiceLocator.provideOrderRepository(requireContext()))
+        OrderViewModelFactory(
+            orderRepository = ServiceLocator.provideOrderRepository(requireContext()),
+            rewardRepository = ServiceLocator.provideRewardRepository()
+        )
     }
 
-    // ✅ 추가: CartFragment에서도 같은 Activity 범위 ViewModel로 받아야 함
+
     private val nfcViewModel: NfcViewModel by activityViewModels()
 
     private val cartAdapter = CartAdapter(
@@ -72,7 +75,6 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
             adapter = cartAdapter
         }
 
-        // ✅ 토글 버튼
         binding.btnStoreOrder.setOnClickListener {
             selectedOrderType = "STORE"
             updateOrderTypeUi()
@@ -85,7 +87,6 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
 
         binding.btnClear.setOnClickListener { cartViewModel.clear() }
 
-        // ✅ btnOrder 리스너는 "딱 1개"만 존재해야 함
         binding.btnOrder.setOnClickListener {
             val storeId = selectedStoreViewModel.selectedStore.value?.storeId
             if (storeId.isNullOrBlank()) { toast("매장을 먼저 선택해주세요"); return@setOnClickListener }
@@ -96,7 +97,6 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
             if (uid.isBlank()) { toast("로그인이 필요해요"); return@setOnClickListener }
 
             if (selectedOrderType == "PICKUP") {
-                // ✅ 픽업 주문은 즉시 주문
                 orderViewModel.placeOrder(
                     cartItems = items,
                     storeId = storeId,
@@ -104,7 +104,6 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
                     tableNo = null
                 )
             } else {
-                // ✅ 매장 주문은 NFC 태깅 대기
                 waitingNfcForStoreOrder = true
                 nfcViewModel.startWaiting()
                 showNfcDialog()
@@ -167,7 +166,6 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
                         return@collect
                     }
 
-                    // ✅ 어떤 NFC든 1번 테이블
                     orderViewModel.placeOrder(
                         cartItems = items,
                         storeId = storeId,
@@ -187,10 +185,7 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
             .setCancelable(true)
             .setNegativeButton("취소") { d, _ ->
                 waitingNfcForStoreOrder = false
-
-                // ✅ 이거 추가: ReaderMode 끄기
                 nfcViewModel.stopWaiting()
-
                 d.dismiss()
             }
             .create()
@@ -219,7 +214,7 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
                 ContextCompat.getColor(requireContext(), R.color.bg_surface)
             )
             btn.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_primary))
-            btn.strokeWidth = resources.getDimensionPixelSize(R.dimen.stroke_1dp) // 아래 dimen 추가
+            btn.strokeWidth = resources.getDimensionPixelSize(R.dimen.stroke_1dp)
             btn.strokeColor = ColorStateList.valueOf(
                 ContextCompat.getColor(requireContext(), R.color.divider)
             )
@@ -234,6 +229,7 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
             applySelectedStyle(binding.btnPickupOrder)
         }
     }
+
     private fun toast(msg: String) {
         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
     }

@@ -7,6 +7,6 @@ data class Reward(
     val totalOrders: Int = 0,
     val updatedAt: Long = System.currentTimeMillis(),
     val createdAt: Long = System.currentTimeMillis(),
-    val americanoCoupons: Int = 0 // ✅ 추가
+    val americanoCoupons: Int = 0
 )
 

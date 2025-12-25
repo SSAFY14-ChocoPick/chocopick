@@ -68,6 +68,7 @@ class MainActivity : AppCompatActivity() {
     private val nfcViewModel : NfcViewModel by viewModels()
     private var entryDialog: AlertDialog? = null
 
+    private val nfcAdapter: NfcAdapter? by lazy { NfcAdapter.getDefaultAdapter(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,6 +78,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         createFcmChannel()
+        observeNfcWaiting()
 
         // ✅ 앱 시작 시 딱 1번만 내 정보 로드
         currentUserVm.loadMe()
@@ -111,6 +113,37 @@ class MainActivity : AppCompatActivity() {
             Log.d("FCM", "token=$it")
         }
 
+    }
+
+    private fun observeNfcWaiting() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                nfcViewModel.waiting.collect { waiting ->
+                    if (waiting) enableReaderMode()
+                    else disableReaderMode()
+                }
+            }
+        }
+    }
+    private fun enableReaderMode() {
+        val adapter = nfcAdapter ?: return
+
+        adapter.enableReaderMode(
+            this,
+            { tag ->
+                Log.d("NFC", "ReaderMode tag=$tag")
+                // ✅ 여기서 주문 트리거
+                runOnUiThread { nfcViewModel.onTagDetected() }
+            },
+            NfcAdapter.FLAG_READER_NFC_A or
+                    NfcAdapter.FLAG_READER_NFC_B or
+                    NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK, // ✅ 시스템 NDEF 처리(스토어 팝업) 스킵
+            null
+        )
+    }
+
+    private fun disableReaderMode() {
+        nfcAdapter?.disableReaderMode(this)
     }
 
     override fun onNewIntent(intent: Intent) {

@@ -12,7 +12,7 @@
         android:orientation="vertical"
         android:padding="9dp">
 
-        <!-- 상단 헤더 -->
+        <!-- 상단 헤더 (고정) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -44,72 +44,11 @@
                 android:layout_height="44dp"/>
         </LinearLayout>
 
-        <!-- ✅ AI 리뷰 요약 카드 (간단 버전) -->
+        <!-- 평균 별점 카드 (고정) -->
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardReviewSummary"
+            android:id="@+id/cardRating"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="18dp"
-            app:strokeWidth="1dp"
-            app:strokeColor="@color/divider"
-            app:cardBackgroundColor="@color/bg_surface">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="14dp"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="AI 리뷰 요약"
-                    android:textStyle="bold"
-                    android:textSize="14sp"
-                    android:textColor="@color/text_primary"/>
-
-                <ProgressBar
-                    android:id="@+id/progressSummary"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_gravity="center_horizontal"
-                    android:visibility="gone"/>
-
-                <TextView
-                    android:id="@+id/tvSummary"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="리뷰 요약을 불러오는 중입니다..."
-                    android:textSize="15sp"
-                    android:lineSpacingExtra="4dp"
-                    android:textColor="@color/text_primary"/>
-
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/chipGroupSummary"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    app:singleLine="true"
-                    app:chipSpacingHorizontal="6dp"
-                    app:chipSpacingVertical="6dp"/>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="※ 리뷰를 기반으로 자동 요약됩니다."
-                    android:textSize="11sp"
-                    android:textColor="@color/text_secondary"/>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- 평균 별점 카드 -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
             app:cardCornerRadius="18dp"
             app:strokeWidth="1dp"
             app:strokeColor="@color/divider"
@@ -123,6 +62,8 @@
                 android:gravity="center_vertical">
 
                 <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="총평점"
                     android:textStyle="bold"
                     android:textSize="14sp"
@@ -141,19 +82,114 @@
 
                 <TextView
                     android:id="@+id/tvCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="(0)"
                     android:textSize="13sp"
                     android:textColor="@color/text_secondary"/>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- 리뷰 리스트 -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvReviews"
+        <!-- ✅ 여기부터 스크롤: 리뷰 요약 + 리뷰 리스트 -->
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scrollReviewArea"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="12dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:fillViewport="true"
+            android:clipToPadding="false"
+            android:paddingTop="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- ✅ AI 리뷰 요약 카드 (총평점 아래로 이동) -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardReviewSummary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="18dp"
+                    app:strokeWidth="1dp"
+                    app:strokeColor="@color/divider"
+                    app:cardBackgroundColor="@color/bg_surface">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="14dp"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="AI 리뷰 요약"
+                            android:textStyle="bold"
+                            android:textSize="14sp"
+                            android:textColor="@color/text_primary"/>
+
+                        <ProgressBar
+                            android:id="@+id/progressSummary"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:layout_gravity="center_horizontal"
+                            android:visibility="gone"/>
+
+                        <TextView
+                            android:id="@+id/tvSummary"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="리뷰 요약을 불러오는 중입니다..."
+                            android:textSize="15sp"
+                            android:lineSpacingExtra="4dp"
+                            android:textColor="@color/text_primary"/>
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/chipGroupSummary"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            app:singleLine="false"
+                            app:chipSpacingHorizontal="6dp"
+                            app:chipSpacingVertical="6dp"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="※ 리뷰를 기반으로 자동 요약됩니다."
+                            android:textSize="11sp"
+                            android:textColor="@color/text_secondary"/>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- ✅ 리뷰 로딩 문구 -->
+                <TextView
+                    android:id="@+id/tvReviewsLoading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center"
+                    android:paddingVertical="24dp"
+                    android:text="리뷰를 불러오는 중입니다..."
+                    android:textSize="14sp"
+                    android:textColor="@color/text_secondary"
+                    android:visibility="gone"/>
+
+                <!-- 리뷰 리스트 (NestedScrollView 안이므로 wrap_content + nestedScrolling false) -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvReviews"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never"/>
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
     </LinearLayout>
 
     <!-- 작성 버튼 -->

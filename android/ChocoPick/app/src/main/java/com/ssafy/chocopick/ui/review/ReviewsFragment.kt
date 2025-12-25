@@ -117,6 +117,15 @@ class ReviewsFragment : Fragment(R.layout.fragment_reviews) {
         }
     }
 
+    private fun addChip(text: String) {
+        val chip = com.google.android.material.chip.Chip(requireContext()).apply {
+            this.text = text
+            isClickable = false
+            isCheckable = false
+        }
+        binding.chipGroupSummary.addView(chip)
+    }
+
     private fun collect() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -141,6 +150,44 @@ class ReviewsFragment : Fragment(R.layout.fragment_reviews) {
                         }
                     }
                 }
+
+                launch {
+                    vm.summaryState.collect { state ->
+                        when (state) {
+                            is UiState.Loading -> {
+                                binding.progressSummary.visibility = View.VISIBLE
+                                binding.tvSummary.text = "리뷰 요약을 생성 중입니다..."
+                                binding.chipGroupSummary.removeAllViews()
+                            }
+
+                            is UiState.Success -> {
+                                binding.progressSummary.visibility = View.GONE
+                                val s = state.data
+
+                                // ✅ 장점/단점만 표시 (overall 제거)
+                                binding.tvSummary.text = "장점: ${s.pros}\n단점: ${s.cons}"
+
+                                binding.chipGroupSummary.removeAllViews()
+
+                                // ✅ trend는 빼고 키워드만 (원하면 trend도 addChip 가능)
+                                // addChip(s.trend)
+                                s.keywords.forEach { addChip(it) }
+                            }
+
+                            is UiState.Error -> {
+                                binding.progressSummary.visibility = View.GONE
+                                binding.tvSummary.text = "요약을 불러오지 못했어요."
+                                binding.chipGroupSummary.removeAllViews()
+                            }
+
+                            else -> Unit
+                        }
+                    }
+                }
+
+
+
+
             }
         }
     }

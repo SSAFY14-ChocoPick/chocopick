@@ -25,6 +25,7 @@ class ProductAdapter(private val onItemClick : (Product) -> Unit) : RecyclerView
         fun bindItems(item : Product){
             binding.tvName.text = item.name
             binding.tvPrice.text = "${item.price}원"
+            binding.tvSub.text = item.productId
 
             if (item.imageUrl.isNotBlank()) {
                 Glide.with(binding.ivThumb)

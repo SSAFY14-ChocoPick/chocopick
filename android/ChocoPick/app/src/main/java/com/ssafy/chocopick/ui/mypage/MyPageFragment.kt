@@ -159,20 +159,51 @@ class MyPageFragment : Fragment() {
                     when (state) {
                         is UiState.Success -> {
                             val reward = state.data
+
+                            // 1️⃣ 등급 텍스트
                             binding.tvMembershipGrade.text = reward.membershipTier
-                            binding.progressToNext.progress =
-                                (reward.stamps % 10) * 10
+
+                            // 2️⃣ progress 계산 (주문 누적수 기준)
+                            val progressPercent = when (reward.membershipTier) {
+                                "BRONZE" -> {
+                                    // 0 ~ 9 → 0 ~ 100
+                                    ((reward.totalOrders.coerceIn(0, 9) * 100) / 10)
+                                }
+                                "SILVER" -> {
+                                    // 10 ~ 29 → 0 ~ 100
+                                    (((reward.totalOrders - 10).coerceIn(0, 19) * 100) / 20)
+                                }
+                                "GOLD" -> 100
+                                else -> 0
+                            }
+
+                            binding.progressToNext.progress = progressPercent
+
+                            // 3️⃣ 혜택 설명
                             binding.tvMembershipDesc.text =
                                 myPageViewModel.getBenefitText(reward.membershipTier)
+
+                            // 4️⃣ 다음 등급 안내 문구
+                            val nextLeft = when (reward.membershipTier) {
+                                "BRONZE" -> (10 - reward.totalOrders).coerceAtLeast(0)
+                                "SILVER" -> (30 - reward.totalOrders).coerceAtLeast(0)
+                                else -> 0
+                            }
+
                             binding.tvNextGradeHint.text =
-                                "다음 등급까지 ${10 - (reward.stamps % 10)}회 남았어요"
+                                if (reward.membershipTier == "GOLD")
+                                    "최고 등급이에요 🎉"
+                                else
+                                    "다음 등급까지 ${nextLeft}건 남았어요"
                         }
+
                         else -> Unit
                     }
                 }
             }
         }
     }
+
 
     private var recentOrderId: String? = null
 

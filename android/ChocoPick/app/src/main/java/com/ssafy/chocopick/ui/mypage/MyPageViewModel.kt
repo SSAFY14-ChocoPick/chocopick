@@ -80,13 +80,23 @@ class MyPageViewModel(
         }
     }
 
+    fun calcTier(totalOrders: Int): String =
+        when {
+            totalOrders >= 30 -> "GOLD"
+            totalOrders >= 10 -> "SILVER"
+            else -> "BRONZE"
+        }
+
     fun getBenefitText(tier: String): String =
         when (tier) {
-            "BRONZE" -> "이번 달 혜택: 무료 사이즈업 1회"
-            "SILVER" -> "이번 달 혜택: 픽업 무료 쿠폰 1장"
-            "GOLD" -> "이번 달 혜택: 매장 에코(개인컵) 무료 쿠폰 1장"
+            "BRONZE" -> "이번 달 혜택: 롯데 아몬드 초코볼 46g 증정"
+            "SILVER" -> "이번 달 혜택: 밀카 요거트 초콜릿 100g 증정"
+            "GOLD" -> "이번 달 혜택: 몰티져스 밀크 버켓 초콜릿 465g 증정"
             else -> ""
         }
+
+    fun getBenefitDetailText(tier: String): String =
+        "매장 방문 시 직원 확인 후 제공돼요. (재고 상황에 따라 동일 가격대 상품으로 대체될 수 있어요.)"
 
     // 최근 주문 목록 1개 로드
     private val _recentOrderState =

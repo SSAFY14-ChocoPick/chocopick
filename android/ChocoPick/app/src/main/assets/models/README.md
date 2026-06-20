@@ -1,14 +1,16 @@
 # Local model assets
 
-Large `.litertlm` model files are intentionally excluded from the GitHub repository.
+Large `.litertlm` model files are tracked with Git LFS.
 
-Place the required model files in this directory when running the Android app locally.
+After cloning the repository, run:
 
-Download the model assets from the GitHub release:
+```sh
+git lfs pull
+```
 
-https://github.com/SSAFY14-ChocoPick/chocopick/releases/tag/model-assets-v1
+The `gemma-3n-E2B-it-int4.litertlm` model is stored as split LFS files because the single file is larger than GitHub's current LFS object limit for this repository.
 
-The `gemma-3n-E2B-it-int4.litertlm` file is split into two release assets. Reassemble it after downloading both parts:
+Reassemble it after `git lfs pull`:
 
 ```sh
 cat gemma-3n-E2B-it-int4.litertlm.part-aa gemma-3n-E2B-it-int4.litertlm.part-ab > gemma-3n-E2B-it-int4.litertlm

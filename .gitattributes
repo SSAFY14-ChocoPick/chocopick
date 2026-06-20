@@ -1,0 +1,2 @@
+android/ChocoPick/app/src/main/assets/models/*.litertlm filter=lfs diff=lfs merge=lfs -text
+android/ChocoPick/app/src/main/assets/models/*.litertlm.part-* filter=lfs diff=lfs merge=lfs -text

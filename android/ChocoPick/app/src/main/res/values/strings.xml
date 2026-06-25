@@ -1,6 +1,16 @@
 <resources>
     <string name="app_name">ChocoPick</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="google_maps_key">AIzaSyBICKYyzxEjSN0p08aTljW7U7LiLe8yoQk</string>
+
+    <!-- 공통 -->
+    <string name="common_cancel">취소</string>
+    <string name="login_required">로그인이 필요해요</string>
+
+    <!-- 장바구니 / 주문 -->
+    <string name="cart_select_store_first">매장을 먼저 선택해주세요</string>
+    <string name="cart_empty">장바구니가 비어있어요</string>
+    <string name="order_complete">주문 완료!</string>
+    <string name="order_info_invalid">주문 정보를 확인할 수 없어요</string>
+    <string name="cart_nfc_dialog_title">매장 주문</string>
+    <string name="cart_nfc_dialog_message">테이블의 NFC를 태깅해주세요.\n(현재 버전: 어떤 NFC든 태깅되면 1번 테이블로 처리)</string>
 </resources>

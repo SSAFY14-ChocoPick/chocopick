@@ -2,6 +2,8 @@ package com.ssafy.chocopick.ui.order
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.ssafy.chocopick.data.model.CartItem
@@ -11,15 +13,7 @@ class CartAdapter(
     private val onPlus: (String) -> Unit,
     private val onMinus: (String) -> Unit,
     private val onRemove: (String) -> Unit
-) : RecyclerView.Adapter<CartAdapter.ViewHolder>() {
-
-    private val items = mutableListOf<CartItem>()
-
-    fun submitList(list: List<CartItem>) {
-        items.clear()
-        items.addAll(list)
-        notifyDataSetChanged()
-    }
+) : ListAdapter<CartItem, CartAdapter.ViewHolder>(DIFF) {
 
     inner class ViewHolder(
         private val binding: ItemCartBinding
@@ -56,8 +50,15 @@ class CartAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(items[position])
+        holder.bind(getItem(position))
     }
 
-    override fun getItemCount(): Int = items.size
+    companion object {
+        private val DIFF = object : DiffUtil.ItemCallback<CartItem>() {
+            override fun areItemsTheSame(old: CartItem, new: CartItem) =
+                old.productId == new.productId
+
+            override fun areContentsTheSame(old: CartItem, new: CartItem) = old == new
+        }
+    }
 }

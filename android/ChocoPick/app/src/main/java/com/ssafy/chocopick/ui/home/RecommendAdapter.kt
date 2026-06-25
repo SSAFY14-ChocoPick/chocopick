@@ -2,6 +2,8 @@ package com.ssafy.chocopick.ui.home
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.ssafy.chocopick.R
@@ -9,15 +11,7 @@ import com.ssafy.chocopick.databinding.ItemRecommendBinding
 
 class RecommendAdapter(
     private val onClick: (RecommendUi) -> Unit
-) : RecyclerView.Adapter<RecommendAdapter.VH>() {
-
-    private val items = mutableListOf<RecommendUi>()
-
-    fun submitList(list: List<RecommendUi>) {
-        items.clear()
-        items.addAll(list)
-        notifyDataSetChanged()
-    }
+) : ListAdapter<RecommendUi, RecommendAdapter.VH>(DIFF) {
 
     inner class VH(private val binding: ItemRecommendBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: RecommendUi) {
@@ -38,9 +32,16 @@ class RecommendAdapter(
         return VH(binding)
     }
 
-    override fun getItemCount(): Int = items.size
-
     override fun onBindViewHolder(holder: VH, position: Int) {
-        holder.bind(items[position])
+        holder.bind(getItem(position))
+    }
+
+    companion object {
+        private val DIFF = object : DiffUtil.ItemCallback<RecommendUi>() {
+            override fun areItemsTheSame(old: RecommendUi, new: RecommendUi) =
+                old.productId == new.productId
+
+            override fun areContentsTheSame(old: RecommendUi, new: RecommendUi) = old == new
+        }
     }
 }

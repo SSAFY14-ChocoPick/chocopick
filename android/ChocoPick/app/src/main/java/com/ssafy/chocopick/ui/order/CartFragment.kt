@@ -89,12 +89,12 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
 
         binding.btnOrder.setOnClickListener {
             val storeId = selectedStoreViewModel.selectedStore.value?.storeId
-            if (storeId.isNullOrBlank()) { toast("매장을 먼저 선택해주세요"); return@setOnClickListener }
+            if (storeId.isNullOrBlank()) { toast(getString(R.string.cart_select_store_first)); return@setOnClickListener }
 
             val items = cartViewModel.cartItems.value
-            if (items.isEmpty()) { toast("장바구니가 비어있어요"); return@setOnClickListener }
+            if (items.isEmpty()) { toast(getString(R.string.cart_empty)); return@setOnClickListener }
 
-            if (uid.isBlank()) { toast("로그인이 필요해요"); return@setOnClickListener }
+            if (uid.isBlank()) { toast(getString(R.string.login_required)); return@setOnClickListener }
 
             if (selectedOrderType == "PICKUP") {
                 orderViewModel.placeOrder(
@@ -132,7 +132,7 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
                 orderViewModel.orderState.collect { state ->
                     when (state) {
                         is UiState.Success -> {
-                            toast("주문 완료!")
+                            toast(getString(R.string.order_complete))
                             cartViewModel.clear()
 
                             parentFragmentManager.beginTransaction()
@@ -162,7 +162,7 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
                     val storeId = selectedStoreViewModel.selectedStore.value?.storeId
                     val items = cartViewModel.cartItems.value
                     if (storeId.isNullOrBlank() || items.isEmpty() || uid.isBlank()) {
-                        toast("주문 정보를 확인할 수 없어요")
+                        toast(getString(R.string.order_info_invalid))
                         return@collect
                     }
 
@@ -180,10 +180,10 @@ class CartFragment : Fragment(R.layout.fragment_cart) {
     private fun showNfcDialog() {
         dismissNfcDialog()
         nfcDialog = AlertDialog.Builder(requireContext())
-            .setTitle("매장 주문")
-            .setMessage("테이블의 NFC를 태깅해주세요.\n(현재 버전: 어떤 NFC든 태깅되면 1번 테이블로 처리)")
+            .setTitle(R.string.cart_nfc_dialog_title)
+            .setMessage(R.string.cart_nfc_dialog_message)
             .setCancelable(true)
-            .setNegativeButton("취소") { d, _ ->
+            .setNegativeButton(R.string.common_cancel) { d, _ ->
                 waitingNfcForStoreOrder = false
                 nfcViewModel.stopWaiting()
                 d.dismiss()

@@ -7,11 +7,8 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 
 
 object ApiProvider {
-    private const val BASE_URL = "http://192.168.0.21:8080/" // 에뮬레이터 -> PC localhost
-
-    //192.168.33.123
-//    10.0.2.2:8080
-//    175.120.137.147
+    // 10.0.2.2 = 안드로이드 에뮬레이터에서 본 PC(localhost). 실기기 테스트 시 PC의 LAN IP로 변경.
+    private const val BASE_URL = "http://10.0.2.2:8080/"
     private val gson = GsonBuilder()
         .setLenient()
         .create()

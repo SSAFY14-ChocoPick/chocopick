@@ -1,5 +1,0 @@
-firebase:
-  credentials-path: classpath:chocopick-adminsdk.json
-
-server:
-  port: 8080

@@ -1,99 +1,254 @@
 # 🍫 ChocoPick
 
-> **주문하고, 매장에서 바로 픽업하는 O2O 초콜릿 스마트 픽업 서비스**
-> 배송 대기 없이 — 앱에서 미리 주문하고 가까운 매장에서 받아가세요.
+> ### "주문은 미리, 줄은 서지 않고 — 가까운 매장에서 바로 픽업"
+>
+> 앱에서 초콜릿을 주문하고 지도로 고른 오프라인 매장에서 바로 받아가는 **O2O(Order-to-Offline) 스마트 픽업 서비스**.
+> 네트워크 없이 기기 안에서 직접 추론하는 **온디바이스 AI 챗봇**, NFC 매장 주문, 비콘 입장 감지를 담은 안드로이드 앱입니다.
 
-<p>
-  <img src="https://img.shields.io/badge/Android-Kotlin-7F52FF?logo=kotlin&logoColor=white" alt="Kotlin"/>
-  <img src="https://img.shields.io/badge/Architecture-MVVM-FF6F00" alt="MVVM"/>
-  <img src="https://img.shields.io/badge/Backend-Spring%20Boot-6DB33F?logo=springboot&logoColor=white" alt="Spring Boot"/>
-  <img src="https://img.shields.io/badge/Firebase-Realtime%20DB%20·%20Auth%20·%20FCM-FFCA28?logo=firebase&logoColor=black" alt="Firebase"/>
-  <img src="https://img.shields.io/badge/On--device%20AI-MediaPipe%20Gemma-4285F4?logo=google&logoColor=white" alt="MediaPipe"/>
-  <img src="https://img.shields.io/badge/Maps-Google%20Maps%20SDK-34A853?logo=googlemaps&logoColor=white" alt="Maps"/>
-</p>
+- **서비스명**: ChocoPick (Chocolate + Pick up)
+- **개발 기간**: 2025.12.01 ~ 2025.12.26 (SSAFY 14기 프로젝트)
+- **개발 인원**: 2명 (손다현, 이기혁)
+- **핵심 특징**: 온디바이스 Gemma LLM 챗봇 · NFC/포장 주문 분기 · 비콘 입장 알림 · FCM 주문 상태 푸시
 
-SSAFY 자율 프로젝트 · 안드로이드 기반 O2O(Order-to-Offline) 픽업 애플리케이션입니다.
+![썸네일](./docs/chocopick_thumbnail.png)
 
----
+# 목차
 
-## 📖 소개
+- [프로젝트 개요](#프로젝트-개요)
+- [서비스 기획 배경](#서비스-기획-배경)
+- [주요 화면 및 기능 소개](#주요-화면-및-기능-소개)
+- [프로젝트 핵심 기술](#프로젝트-핵심-기술)
+- [시스템 아키텍처](#시스템-아키텍처)
+- [Firebase 데이터 구조](#firebase-데이터-구조)
+- [프로젝트 구조](#프로젝트-구조)
+- [시작하기](#시작하기)
+- [팀원 소개](#팀원-소개)
+- [기술 스택](#기술-스택)
 
-기념일이나 선물 상황에서는 빠른 구매가 중요하지만, 일반 배송은 시간 지연이 발생하고 매장 방문 전에 원하는 상품의 재고를 확인하기 어렵습니다.
+# 프로젝트 개요
 
-**ChocoPick**은 **주문과 픽업을 사전에 연결**하여 이 문제를 해결합니다. 사용자는 앱에서 초콜릿 상품을 주문하고, 지도로 선택한 오프라인 매장에서 직접 픽업합니다. 주문 상태는 실시간 푸시 알림으로 안내됩니다.
+### 📖 프로젝트 소개
 
-> ⚠️ MVP 범위상 **결제/정산 기능은 제외**되며, 주문 생성 · 상태 관리 · 픽업 흐름에 집중합니다.
+**ChocoPick**은 사용자가 모바일 앱으로 초콜릿 상품을 주문한 뒤, 선택한 오프라인 매장에서 직접 픽업하는 **O2O 기반 스마트 픽업 안드로이드 서비스**입니다.
 
----
+결제/정산은 MVP 범위에서 제외하고, **주문 생성 → 상태 관리 → 픽업 흐름**에 집중했습니다. 특히 서버나 네트워크에 의존하지 않고 **기기 안에서 직접 LLM을 추론하는 온디바이스 AI 챗봇**, **NFC 테이블 태깅 기반 매장 주문**, **BLE 비콘 입장 감지** 같은 모바일 디바이스 기능을 적극적으로 활용한 것이 특징입니다.
 
-## ✨ 주요 기능
+### 🎯 핵심 특징
 
-| 분류 | 기능 |
-|------|------|
-| **회원** | 아이디/비밀번호 회원가입(이메일 중복 확인), 로그인 세션 유지, 로그아웃 — *Firebase Authentication* |
-| **매장 탐색** | 지도 + 리스트 동시 제공, 거리순 정렬, 매장명 검색, 위치 권한 거부 시 본사 기준 표시 — *Google Maps SDK* |
-| **상품 / 주문** | 상품 목록·상세, 장바구니(단일 매장 기준), 수량 조정, 총액 표시 |
-| **주문 방식** | `STORE`(매장): **NFC 테이블 태깅** 필수 · `TOUT`(포장): 매장과 **200m 이상 시 경고** 후 주문 |
-| **주문 상태** | `RECEIVED → PREPARING → READY → PICKED_UP` 4단계, 서버 단일 진실원천(SSOT) |
-| **알림** | `READY` 전환 시 **FCM 푸시**, 알림 클릭 시 주문 상세로 이동 |
-| **리뷰** | 별점(1~5) + 텍스트(최대 200자) 작성/수정/삭제 (본인만), 상품별 리뷰 통계 |
-| **리워드** | 주문 스탬프 적립, 멤버십 등급(BRONZE/SILVER/GOLD), 아메리카노 쿠폰 발행/사용 |
-| **즐겨찾기** | 매장 즐겨찾기 추가/관리 |
-| **🤖 온디바이스 AI 챗봇** | 메인 FAB 챗봇 — 매장/상품/가격 안내(rule-based) + 설명/추천(*MediaPipe Gemma 로컬 추론*) |
-| **🤖 AI 리뷰 요약** | 상품 리뷰를 장점/단점/키워드로 요약 (*GMS Gemini API*) |
-| **📍 Beacon 알림** | 매장 근접(BLE) 감지 시 이용 안내 (24시간 1회) — *AltBeacon* |
+- 🍫 **O2O 픽업** — 매장 주문(NFC 테이블 태깅) / 포장 주문(매장 200m 이상 시 경고) 두 가지 흐름
+- 🤖 **온디바이스 AI** — 기기 내 **Gemma LLM** 챗봇(오프라인 동작) + AI 리뷰 요약
+- 🗺️ **위치 기반 탐색** — 지도 + 리스트 동시 제공, 거리순 정렬, 위치 권한 거부 시 본사 기준 대체
+- 📍 **비콘 입장 감지** — 매장 근접(BLE) 시 이용 안내 (24시간 1회)
+- 🔔 **실시간 알림** — 주문 상태 변경 시 FCM 푸시, 알림 클릭 시 주문 상세로 이동
+- 🎁 **리워드** — 주문 스탬프 적립, 멤버십 등급, 아메리카노 쿠폰 발행/사용
 
-전체 기능 요구사항(F01~F27)은 [`docs/01_requirements/requirements.md`](docs/01_requirements/requirements.md)에 정의되어 있습니다.
+# 서비스 기획 배경
 
----
+기념일이나 선물 상황에서는 빠른 구매가 중요하지만, 일반 배송은 시간 지연이 발생하고 매장을 방문하기 전에 원하는 상품의 재고를 확인하기도 어렵습니다.
 
-## 🖼️ 스크린샷
+**ChocoPick**은 이 문제를 **주문과 픽업을 사전에 연결**하는 방식으로 풀어냅니다.
 
-| 로그인 | 메인 (추천·스탬프) | 매장 선택 (지도) |
-|:---:|:---:|:---:|
-| ![로그인](docs/화면%20캡쳐/0_%EB%A1%9C%EA%B7%B8%EC%9D%B8%ED%99%94%EB%A9%B4.png) | ![메인](docs/화면%20캡쳐/1_%EB%A9%94%EC%9D%B8%ED%99%94%EB%A9%B4.png) | ![지도](docs/화면%20캡쳐/2-2_%EB%A7%A4%EC%9E%A5%EC%84%A0%ED%83%9D%EB%B0%A9%EC%8B%9D_%EC%A7%80%EB%8F%84%EC%97%90%EC%84%9C%EC%84%A0%ED%83%9D.png) |
-| **상품 상세 · 리뷰** | **장바구니 · 주문** | **AI 챗봇** |
-| ![리뷰](docs/화면%20캡쳐/2-8_%EC%83%81%ED%92%88%EC%83%81%EC%84%B8%ED%99%94%EB%A9%B4_%EB%A6%AC%EB%B7%B0%EB%AA%A9%EB%A1%9D.png) | ![장바구니](docs/화면%20캡쳐/4_%EC%9E%A5%EB%B0%94%EA%B5%AC%EB%8B%88.png) | ![챗봇](docs/화면%20캡쳐/1-4_%EC%B1%97%EB%B4%87%ED%99%94%EB%A9%B4.png) |
+- 🛒 **사러 가기 전에 미리 주문** — 매장에 도착하면 줄 서지 않고 바로 픽업
+- 🗺️ **지도로 내 주변 매장 확인** — 어디서 받을지 먼저 고르고 주문 진행
+- 🔔 **준비 상태를 푸시로 안내** — "준비 완료" 알림을 받고 방문
+- 📱 **디바이스 경험 강화** — NFC 테이블 태깅, 비콘 입장 감지, 온디바이스 AI로 오프라인 매장 경험과 앱을 연결
 
-> 전체 화면 캡처는 [`docs/화면 캡쳐/`](docs/화면%20캡쳐) 폴더에서 확인할 수 있습니다.
+# 주요 화면 및 기능 소개
 
----
+## 🔐 회원 / 인증
 
-## 🛠️ 기술 스택
+<table>
+  <tr>
+    <th>로그인</th>
+    <th>회원가입</th>
+    <th>이메일 중복 확인</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="./docs/%ED%99%94%EB%A9%B4%20%EC%BA%A1%EC%B3%90/0_%EB%A1%9C%EA%B7%B8%EC%9D%B8%ED%99%94%EB%A9%B4.png" width="260"/></td>
+    <td align="center"><img src="./docs/%ED%99%94%EB%A9%B4%20%EC%BA%A1%EC%B3%90/0-1_%ED%9A%8C%EC%9B%90%EA%B0%80%EC%9E%85%ED%99%94%EB%A9%B4.png" width="260"/></td>
+    <td align="center"><img src="./docs/%ED%99%94%EB%A9%B4%20%EC%BA%A1%EC%B3%90/0-2_%EC%9D%B4%EB%A9%94%EC%9D%BC%EC%A4%91%EB%B3%B5%ED%99%95%EC%9D%B8.png" width="260"/></td>
+  </tr>
+</table>
 
-### Client (Android)
-- **Kotlin** 2.0.21 · **MVVM** · ViewBinding
-- **Coroutines / Flow** (`StateFlow` + `repeatOnLifecycle`)
-- **Retrofit2** + Gson (서버 FCM API, GMS Gemini API)
-- **Firebase** Auth · Realtime Database · Cloud Messaging · Storage (BOM 34.7.0)
-- **Google Maps SDK** + Play Services Location
-- **MediaPipe Tasks GenAI** 0.10.27 (온디바이스 LLM 추론)
-- **AltBeacon** (BLE 비콘) · **Glide** (이미지 로딩)
-- minSdk 24 · targetSdk 36 · JDK 11 · AGP 8.11.1 · Gradle 8.13
+- **Firebase Authentication** 기반 아이디/비밀번호 회원가입 · 로그인, 이메일 중복 확인
+- 앱 재실행 후에도 **로그인 세션 유지**, 로그아웃 제공
 
-### Server
-- **Spring Boot** 3.5.x · Spring Web · JDK 17 · Maven
-- **Firebase Admin SDK** 9.2.0 (FCM 발송)
-- Spring Scheduling (지연 푸시 알림)
+## 🏠 메인 홈
 
-### Infra / Backend-as-a-Service
-- **Firebase Realtime Database** — 실질적 데이터 저장소 (앱이 직접 read/write)
-- **Firebase Cloud Messaging** — 주문 상태 푸시
+<table>
+  <tr><td align="center"><img src="./docs/%ED%99%94%EB%A9%B4%20%EC%BA%A1%EC%B3%90/1_%EB%A9%94%EC%9D%B8%ED%99%94%EB%A9%B4.png" width="280"/></td></tr>
+</table>
 
----
+- 오늘의 추천 상품, 스탬프 현황, 챗봇 진입 FAB를 한 화면에 모은 홈
+- 추천 상품/스탬프 영역에서 상품 상세·리워드 화면으로 바로 이동
 
-## 🏗️ 아키텍처
+## 🗺️ 매장 탐색 (지도 + 리스트)
 
-ChocoPick은 **Firebase를 중심 백엔드**로 사용합니다. 안드로이드 앱이 Realtime Database에 직접 read/write 하며, Spring 서버는 **FCM 푸시 발송 전용**으로 동작합니다(주문 데이터를 다루지 않음).
+<table>
+  <tr>
+    <th>매장 선택</th>
+    <th>지도에서 선택</th>
+    <th>목록에서 선택</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="./docs/%ED%99%94%EB%A9%B4%20%EC%BA%A1%EC%B3%90/2-1_%EB%A7%A4%EC%9E%A5%EC%84%A0%ED%83%9D%EB%B0%A9%EC%8B%9D.png" width="260"/></td>
+    <td align="center"><img src="./docs/%ED%99%94%EB%A9%B4%20%EC%BA%A1%EC%B3%90/2-2_%EB%A7%A4%EC%9E%A5%EC%84%A0%ED%83%9D%EB%B0%A9%EC%8B%9D_%EC%A7%80%EB%8F%84%EC%97%90%EC%84%9C%EC%84%A0%ED%83%9D.png" width="260"/></td>
+    <td align="center"><img src="./docs/%ED%99%94%EB%A9%B4%20%EC%BA%A1%EC%B3%90/2-3_%EB%A7%A4%EC%9E%A5%EC%84%A0%ED%83%9D%EB%B0%A9%EC%8B%9D_%EB%AA%A9%EB%A1%9D%EC%97%90%EC%84%9C%EC%84%A0%ED%83%9D.png" width="260"/></td>
+  </tr>
+</table>
+
+- **Google Maps SDK**로 지도와 리스트를 동시에 제공, 리스트는 **거리순 정렬**
+- 매장명 검색 지원, 위치 권한 거부 시 **본사 좌표 기준**으로 대체 표시
+- 매장 변경 시 장바구니는 단일 매장 기준으로 초기화
+
+## 🛒 상품 · 장바구니
+
+<table>
+  <tr>
+    <th>상품 상세</th>
+    <th>수량 조정</th>
+    <th>장바구니</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="./docs/%ED%99%94%EB%A9%B4%20%EC%BA%A1%EC%B3%90/2-4_%EC%83%81%ED%92%88%EC%83%81%EC%84%B8%ED%99%94%EB%A9%B4.png" width="260"/></td>
+    <td align="center"><img src="./docs/%ED%99%94%EB%A9%B4%20%EC%BA%A1%EC%B3%90/2-5_%EC%83%81%ED%92%88%EC%83%81%EC%84%B8%ED%99%94%EB%A9%B4_%EA%B0%AF%EC%88%98%EC%A1%B0%EC%A0%95%EA%B0%80%EB%8A%A5.png" width="260"/></td>
+    <td align="center"><img src="./docs/%ED%99%94%EB%A9%B4%20%EC%BA%A1%EC%B3%90/4_%EC%9E%A5%EB%B0%94%EA%B5%AC%EB%8B%88.png" width="260"/></td>
+  </tr>
+</table>
+
+- 상품 목록/상세(이름·가격·중량·제조사·원산지), 수량 조정 후 장바구니 담기
+- 장바구니는 **사용자별 SharedPreferences**로 보관, 하단에 총 수량/총액 실시간 표시
+
+## 📦 주문 — 매장(NFC) / 포장(거리 경고)
+
+<table>
+  <tr>
+    <th>매장 주문 (NFC)</th>
+    <th>포장 주문</th>
+    <th>주문 완료 알림</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="./docs/%ED%99%94%EB%A9%B4%20%EC%BA%A1%EC%B3%90/4-1_%EB%A7%A4%EC%9E%A5%EC%A3%BC%EB%AC%B8_%EC%A3%BC%EB%AC%B8%ED%95%98%EA%B8%B0.png" width="260"/></td>
+    <td align="center"><img src="./docs/%ED%99%94%EB%A9%B4%20%EC%BA%A1%EC%B3%90/4-4_%ED%94%BD%EC%97%85%EC%A3%BC%EB%AC%B8_%EC%A3%BC%EB%AC%B8%ED%95%98%EA%B8%B0.png" width="260"/></td>
+    <td align="center"><img src="./docs/%ED%99%94%EB%A9%B4%20%EC%BA%A1%EC%B3%90/4-2_%EB%A7%A4%EC%9E%A5%EC%A3%BC%EB%AC%B8_%EC%A3%BC%EB%AC%B8%EC%99%84%EB%A3%8C%EC%95%8C%EB%A6%BC.png" width="260"/></td>
+  </tr>
+</table>
+
+- **STORE(매장 주문)**: 주문 시 **NFC 테이블 태깅** 필수 → 태그에서 테이블 번호 파싱 후 저장
+- **TOUT(포장 주문)**: 매장과 **200m 이상** 떨어지면 경고 팝업 후 진행
+- 주문 상태는 `RECEIVED → PREPARING → READY → PICKED_UP` 4단계, 주문 후 취소 불가
+
+## ⭐ 리뷰 & AI 요약
+
+<table>
+  <tr>
+    <th>리뷰 목록 (AI 요약)</th>
+    <th>리뷰 작성</th>
+    <th>리뷰 수정 (본인만)</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="./docs/%ED%99%94%EB%A9%B4%20%EC%BA%A1%EC%B3%90/2-8_%EC%83%81%ED%92%88%EC%83%81%EC%84%B8%ED%99%94%EB%A9%B4_%EB%A6%AC%EB%B7%B0%EB%AA%A9%EB%A1%9D.png" width="260"/></td>
+    <td align="center"><img src="./docs/%ED%99%94%EB%A9%B4%20%EC%BA%A1%EC%B3%90/2-9_%EC%83%81%ED%92%88%EC%83%81%EC%84%B8%ED%99%94%EB%A9%B4_%EB%A6%AC%EB%B7%B0%EC%9E%91%EC%84%B1.png" width="260"/></td>
+    <td align="center"><img src="./docs/%ED%99%94%EB%A9%B4%20%EC%BA%A1%EC%B3%90/2-11_%EC%83%81%ED%92%88%EC%83%81%EC%84%B8%ED%99%94%EB%A9%B4_%EB%A6%AC%EB%B7%B0%EC%88%98%EC%A0%95.png" width="260"/></td>
+  </tr>
+</table>
+
+- 별점(1~5) + 텍스트(최대 200자) 리뷰 작성/수정/삭제, **수정·삭제는 작성자 본인만**
+- 상품별 리뷰 통계(평균 별점/개수) 집계, **AI가 장점/단점/키워드로 요약**
+
+## 🤖 온디바이스 AI 챗봇
+
+<table>
+  <tr>
+    <th>챗봇</th>
+    <th>상품 안내</th>
+    <th>매장 안내</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="./docs/%ED%99%94%EB%A9%B4%20%EC%BA%A1%EC%B3%90/1-4_%EC%B1%97%EB%B4%87%ED%99%94%EB%A9%B4.png" width="260"/></td>
+    <td align="center"><img src="./docs/%ED%99%94%EB%A9%B4%20%EC%BA%A1%EC%B3%90/1-5_%EC%B1%97%EB%B4%87%EB%8C%80%ED%99%94%ED%99%94%EB%A9%B4_%EC%83%81%ED%92%88.png" width="260"/></td>
+    <td align="center"><img src="./docs/%ED%99%94%EB%A9%B4%20%EC%BA%A1%EC%B3%90/1-6_%EC%B1%97%EB%B4%87%EB%8C%80%ED%99%94%ED%99%94%EB%A9%B4_%EB%A7%A4%EC%9E%A5.png" width="260"/></td>
+  </tr>
+</table>
+
+- 메인 FAB 챗봇 — **기기 안에서 직접 추론하는 Gemma LLM**(네트워크 불필요)
+- 매장/상품/가격 같은 정확 데이터는 규칙 기반으로 즉답, 설명/추천/응대는 LLM이 생성
+
+## 🎁 마이페이지 · 리워드
+
+<table>
+  <tr>
+    <th>마이페이지</th>
+    <th>주문 내역</th>
+    <th>스탬프 · 쿠폰</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="./docs/%ED%99%94%EB%A9%B4%20%EC%BA%A1%EC%B3%90/3_%EB%A7%88%EC%9D%B4%ED%8E%98%EC%9D%B4%EC%A7%80.png" width="260"/></td>
+    <td align="center"><img src="./docs/%ED%99%94%EB%A9%B4%20%EC%BA%A1%EC%B3%90/3-2_%EC%A3%BC%EB%AC%B8%EB%82%B4%EC%97%AD.png" width="260"/></td>
+    <td align="center"><img src="./docs/%ED%99%94%EB%A9%B4%20%EC%BA%A1%EC%B3%90/3-3_%EC%BF%A0%ED%8F%B0%EC%8A%A4%ED%83%AC%ED%94%84%EB%A6%AC%EC%9B%8C%EB%93%9C.png" width="260"/></td>
+  </tr>
+</table>
+
+- 회원 정보 수정, 주문 내역/상세(지도 픽업 위치), 즐겨찾는 매장 관리
+- 주문 누적 기반 **스탬프 적립 · 멤버십 등급 · 아메리카노 쿠폰** 발행/사용 (중복 적립 방지 포함)
+
+## 📍 비콘 & 알림
+
+<table>
+  <tr>
+    <th>비콘 입장 감지</th>
+    <th>알림 설정</th>
+    <th>준비 완료 알림</th>
+  </tr>
+  <tr>
+    <td align="center"><img src="./docs/%ED%99%94%EB%A9%B4%20%EC%BA%A1%EC%B3%90/1-7_%EB%B9%84%EC%BD%98%EC%9D%B8%EC%8B%9D.png" width="260"/></td>
+    <td align="center"><img src="./docs/%ED%99%94%EB%A9%B4%20%EC%BA%A1%EC%B3%90/3-6_%EC%95%8C%EB%A6%BC%EC%84%A4%EC%A0%95.png" width="260"/></td>
+    <td align="center"><img src="./docs/%ED%99%94%EB%A9%B4%20%EC%BA%A1%EC%B3%90/4-3_%EB%A7%A4%EC%9E%A5%EC%A3%BC%EB%AC%B8_%EC%A4%80%EB%B9%84%EC%99%84%EB%A3%8C%EC%95%8C%EB%A6%BC.png" width="260"/></td>
+  </tr>
+</table>
+
+- **AltBeacon**으로 매장 근접(약 1m) 감지 시 이용 안내 (24시간 1회)
+- 주문 상태가 `READY`로 바뀌면 **FCM 푸시** 수신, 알림 클릭 시 주문 상세로 이동
+
+# 프로젝트 핵심 기술
+
+## 🤖 온디바이스 AI 챗봇 (MediaPipe · Gemma)
+
+- **MediaPipe Tasks GenAI** 런타임으로 **Gemma 3 (1B, int4)** 모델을 **기기 내에서 직접 추론**합니다. 서버·네트워크가 필요 없어 오프라인에서도 동작합니다.
+- 앱 최초 실행 시 `ModelCopier`가 모델(`.litertlm`)을 내부 저장소로 복사하고, `LlmInference` 엔진을 초기화합니다.
+- **하이브리드 응답 전략**: 매장/상품/가격 같은 *정확 데이터*는 규칙 기반(`HardcodedContext`)으로 100% 정확하게 즉답하고, *설명·추천·응대*만 LLM에 위임해 환각을 줄였습니다.
+
+## ✨ AI 리뷰 요약 (GMS Gemini)
+
+- 상품 리뷰를 **Gemini 2.5 Flash**(GMS API)로 요약해 **장점/단점/키워드 JSON**으로 상품 상세에 노출합니다.
+- 출력 포맷을 스키마로 고정해 일관된 요약 UI를 보장합니다.
+
+## 📲 NFC 매장 주문 & BLE 비콘
+
+- **NFC**: 매장 주문 시 테이블의 NFC 태그를 읽어 `table:{번호}`를 파싱하고, 주문마다 테이블 번호를 저장합니다.
+- **Beacon(AltBeacon)**: 매장 비콘에 근접하면 입장 알림을 띄우되, `consecutiveHits`/`cooldown`으로 오탐과 중복 노출을 제어합니다.
+
+## 🔔 FCM 주문 상태 알림 (Spring Boot + Firebase Admin)
+
+- 별도 **Spring Boot 서버**가 **Firebase Admin SDK**로 FCM 푸시를 발송합니다.
+- 주문 흐름을 시뮬레이션하기 위해 스케줄러로 **즉시/지연(0·10·20초)** 알림("주문 완료 → 접수 → 픽업")을 순차 전송합니다.
+
+## 🗄️ Firebase Realtime DB 기반 MVVM
+
+- **Model → DataSource → Repository(interface) → RepositoryImpl** 계층을 일관되게 적용하고, UI는 `UiState` sealed class로 로딩/성공/에러를 통일했습니다.
+- `StateFlow` + `repeatOnLifecycle`로 화면 상태를 안전하게 구독하며, 리워드 적립 등은 RTDB **트랜잭션**으로 멱등성을 보장합니다.
+
+# 시스템 아키텍처
+
+ChocoPick은 **Firebase를 중심 백엔드(BaaS)**로 사용합니다. 안드로이드 앱이 Realtime Database에 직접 read/write 하고, Spring 서버는 **FCM 푸시 발송 전용**으로 동작합니다.
 
 ```mermaid
 flowchart TB
     subgraph Client["📱 Android App · Kotlin · MVVM"]
-        direction TB
         UI["UI Layer<br/>Fragment + ViewModel + UiState"]
-        Repo["Repository Layer<br/>interface + Impl"]
-        DS["DataSource Layer<br/>Firebase / Local / Beacon / GMS"]
-        AI["🤖 On-device AI<br/>MediaPipe · Gemma3-1B"]
+        Repo["Repository Layer"]
+        DS["DataSource Layer"]
+        AI["🤖 On-device AI<br/>MediaPipe · Gemma 3-1B"]
         UI --> Repo --> DS
         UI -. 챗봇 .-> AI
     end
@@ -101,12 +256,12 @@ flowchart TB
     subgraph Firebase["🔥 Firebase (BaaS)"]
         Auth["Authentication"]
         RTDB[("Realtime Database")]
-        Storage["Storage<br/>(상품 이미지)"]
+        Storage["Storage"]
         FCM["Cloud Messaging"]
     end
 
     subgraph Server["☕ Spring Boot Server"]
-        FCMSvc["FCM 발송 서비스<br/>즉시 / 지연(0·10·20s)"]
+        FCMSvc["FCM 발송 서비스<br/>즉시 / 지연"]
     end
 
     GMS["☁️ GMS Gemini API<br/>리뷰 요약"]
@@ -120,162 +275,133 @@ flowchart TB
     FCM -. 주문 상태 푸시 .-> Client
 ```
 
-**계층 구조**
-```
-UI (Fragment + ViewModel)  →  UiState(sealed)로 Loading/Success/Error 통일
-   └─ Repository (interface)
-        └─ RepositoryImpl
-             └─ DataSource (Firebase Realtime / Local / Beacon / GMS)
-DI: ServiceLocator + ViewModelFactory (수동 주입)
-```
-
----
-
-## 📂 프로젝트 구조
+# Firebase 데이터 구조
 
 ```
+/users/{uid}                       # 회원 정보, fcmToken
+/stores/{storeId}                  # 매장 (name, address, lat, lng …)
+/products/{productId}              # 상품 (name, price, weight, imageUrl …)
+/all_orders/{orderId}              # 전체 주문 (items, status, store, tableNo …)
+/orders_eachUser/{uid}/{orderId}   # 사용자별 주문 (조회 최적화 비정규화)
+/reviews/{productId}/{reviewId}    # 상품별 리뷰
+/reviewStats/{productId}           # 리뷰 통계 (avgRating, reviewCount)
+/rewards/{uid}                     # 스탬프, 멤버십, 쿠폰, appliedOrders(멱등성)
+/coupons/{uid}/{couponId}          # 발행된 쿠폰
+/favorites/{uid}/{storeId}         # 즐겨찾는 매장
+/recommendProduct                  # 추천 상품 ID 목록
+```
+
+# 프로젝트 구조
+
+```text
 chocopick/
-├── android/ChocoPick/              # 📱 안드로이드 앱 (Kotlin, 152개 .kt)
+├── android/ChocoPick/              # 📱 안드로이드 앱 (Kotlin, MVVM)
 │   └── app/src/main/
 │       ├── java/com/ssafy/chocopick/
 │       │   ├── ai/                 # 온디바이스 AI (Helper, HardcodedContext)
 │       │   ├── data/
-│       │   │   ├── model/          # 도메인 모델 (Order, Product, Review, Reward …)
+│       │   │   ├── model/          # 도메인 모델
 │       │   │   ├── remote/         # Retrofit (FCM API, GMS Gemini API)
 │       │   │   ├── repository/     # Repository 인터페이스 + Impl
 │       │   │   └── source/         # DataSource (firebase / local / beacon / gms)
 │       │   ├── ui/                 # 화면 (auth, home, order, mypage, review, chatbot, common)
-│       │   └── util/               # UiState, NavExt, ModelCopier, DistanceUtil …
+│       │   └── util/               # UiState, NavExt, ModelCopier …
 │       ├── assets/models/          # Gemma .litertlm 모델 (Git LFS)
-│       └── res/                    # layout(31), drawable, menu, values …
+│       └── res/                    # layout, drawable, menu, values …
 │
 ├── server/chocopick/chocopick/     # ☕ Spring Boot 서버 (FCM 발송 전용)
-│   └── src/main/java/com/ssafy/chocopick/chocopick/
+│   └── src/main/java/.../chocopick/
 │       ├── config/                 # FirebaseConfig, SchedulerConfig
-│       ├── controller/             # FCMController (/api/test/fcm …)
+│       ├── controller/             # FCMController
 │       └── service/                # FCMService, DelayedFcmService
 │
-├── docs/                           # 📚 기획·요구사항·설계·API 문서 + 화면 캡처
-├── img/                            # 상품 이미지 (750×750)
+├── docs/                           # 📚 기획·요구사항·설계 문서 + 화면 캡처
 ├── product_info.json               # 초기 상품 카탈로그 (초콜릿 19종)
 └── README.md
 ```
 
----
+# 시작하기
 
-## 🚀 시작하기
+> 🔑 `google-services.json`·Google Maps 키·GMS 키는 저장소에 포함되어 있어 별도 설정 없이 실행됩니다.
 
-> 🔑 Firebase 설정(`google-services.json`), Google Maps 키, GMS API 키는 **모두 저장소에 포함**되어 있어
-> 별도 키 설정 없이 클론 후 바로 실행됩니다.
-
-### 사전 요구사항
-- **Android Studio** (Koala 이상 권장), **JDK 11+**
-- **Git LFS** (AI 모델 파일 — 필수)
-- **JDK 17** + Maven (FCM 서버를 함께 띄울 때만)
-
-### 1. 클론 & 실행
+### 1. 클론 & 실행 (Android)
 
 ```bash
 git clone <repository-url>
 cd chocopick
-git lfs pull          # 온디바이스 AI 모델(gemma3-1b, ~584MB) 내려받기
+git lfs pull          # 온디바이스 AI 모델(gemma3-1b, ~584MB)
 ```
 
-이후 `android/ChocoPick` 를 Android Studio로 열고 ▶ **Run** 하면 끝입니다.
-에뮬레이터 기준 추가 설정이 필요 없습니다. (실기기에서 FCM까지 테스트하려면 `data/remote/ApiProvider.kt`의 `BASE_URL`만 PC의 LAN IP로 변경 — 에뮬레이터는 기본값 `10.0.2.2`로 동작)
-
-> 챗봇은 `gemma3-1b-it-int4.litertlm` 단일 파일만 사용하며, 앱 최초 실행 시 `ModelCopier`가 내부 저장소로 복사합니다.
-> `gemma-3n-E2B`(분할본)는 **선택** — 더 큰 모델로 교체할 때만 아래처럼 재조립합니다:
-> ```bash
-> cd android/ChocoPick/app/src/main/assets/models
-> cat gemma-3n-E2B-it-int4.litertlm.part-aa gemma-3n-E2B-it-int4.litertlm.part-ab > gemma-3n-E2B-it-int4.litertlm
-> ```
+이후 `android/ChocoPick`를 Android Studio로 열고 ▶ **Run**. (에뮬레이터 기준 추가 설정 불필요)
 
 ### 2. (선택) FCM 푸시 서버
 
-주문 상태 푸시 알림을 테스트하려면 Spring 서버를 띄웁니다. **앱 자체는 서버 없이도 동작**합니다(푸시만 미발생).
-
 ```bash
 cd server/chocopick/chocopick
-
-# Firebase 콘솔 → 프로젝트 설정 → 서비스 계정 → 새 비공개 키 생성 후 아래 경로에 저장
-#   src/main/resources/chocopick-adminsdk.json   ← 저장소에 없는 유일한 파일, 한 번만 추가
+# Firebase 콘솔 → 서비스 계정 키를 src/main/resources/chocopick-adminsdk.json 으로 추가
 ./mvnw spring-boot:run        # http://localhost:8080
 ```
 
-푸시 발송 테스트:
-```bash
-curl -X POST "http://localhost:8080/api/test/fcm/delayed" \
-  -H "Content-Type: application/json" \
-  -d '{"token":"<FCM_TOKEN>","title":"주문완료","body":"테스트"}'
-```
-`/api/test/fcm/delayed`는 주문 흐름을 시뮬레이션하여 0초/10초/20초 간격으로 "주문 완료 → 접수 → 픽업" 푸시를 발송합니다.
+> 앱은 서버 없이도 동작하며, 서버는 주문 상태 FCM 푸시 발송에만 사용됩니다.
 
----
+# 팀원 소개
 
-## 🗄️ Firebase Realtime Database 구조
+<table>
+  <tr>
+    <td align="center" width="160">
+      <a href="https://github.com/sondahyun"><img src="https://github.com/sondahyun.png" width="100" height="100" style="border-radius:50%"/><br/><b>손다현</b></a><br/>
+      <sub>@sondahyun</sub>
+    </td>
+    <td align="center" width="160">
+      <a href="https://github.com/2kihyuk"><img src="https://github.com/2kihyuk.png" width="100" height="100" style="border-radius:50%"/><br/><b>이기혁</b></a><br/>
+      <sub>@2kihyuk</sub>
+    </td>
+  </tr>
+</table>
 
-```
-/users/{uid}                       # 회원 정보, fcmToken
-/stores/{storeId}                  # 매장 (name, address, lat, lng, nfcRequired …)
-/products/{productId}              # 상품 (name, price, weight, manufacturer, imageUrl …)
-/all_orders/{orderId}              # 전체 주문 (items, status, store, totalPrice, tableNo …)
-/orders_eachUser/{uid}/{orderId}   # 사용자별 주문 (조회 최적화를 위한 비정규화)
-/reviews/{productId}/{reviewId}    # 상품별 리뷰 (rating, content, uid …)
-/reviewStats/{productId}           # 리뷰 통계 (avgRating, reviewCount, ratingSum)
-/rewards/{uid}                     # 스탬프, 멤버십 등급, 쿠폰, appliedOrders(멱등성)
-/coupons/{uid}/{couponId}          # 발행된 쿠폰
-/favorites/{uid}/{storeId}         # 즐겨찾는 매장 (boolean)
-/recommendProduct                  # 추천 상품 ID 목록
-```
+# 기술 스택
 
-초기 상품 데이터는 [`product_info.json`](product_info.json) (초콜릿 19종)을 참고하세요.
+## Android
 
----
+<div>
+  <img src="https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white"/>
+  <img src="https://img.shields.io/badge/MVVM-FF6F00?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/Coroutines_Flow-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Retrofit2-48B983?style=for-the-badge&logo=square&logoColor=white"/>
+</div>
+<div>
+  <img src="https://img.shields.io/badge/MediaPipe_GenAI-0097A7?style=for-the-badge&logo=google&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Google_Maps-4285F4?style=for-the-badge&logo=googlemaps&logoColor=white"/>
+  <img src="https://img.shields.io/badge/AltBeacon-005571?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/NFC-003087?style=for-the-badge&logo=nfc&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Glide-EE6B47?style=for-the-badge"/>
+</div>
 
-## 🤖 온디바이스 AI
+## Backend / Firebase
 
-ChocoPick의 챗봇은 **기기 내에서 직접 LLM을 추론**합니다(네트워크/서버 불필요).
+<div>
+  <img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Java_17-007396?style=for-the-badge&logo=openjdk&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Firebase_Auth-FFCA28?style=for-the-badge&logo=firebase&logoColor=black"/>
+  <img src="https://img.shields.io/badge/Realtime_Database-FFCA28?style=for-the-badge&logo=firebase&logoColor=black"/>
+  <img src="https://img.shields.io/badge/Cloud_Messaging-FFCA28?style=for-the-badge&logo=firebase&logoColor=black"/>
+</div>
 
-- **모델**: Google **Gemma 3 (1B, int4 양자화)** — `.litertlm` 포맷, MediaPipe Tasks GenAI 런타임
-- **하이브리드 응답**:
-  - 매장·상품·가격 등 **정확 데이터**는 rule-based로 즉시 응답 (`HardcodedContext`)
-  - 그 외 **설명·추천·응대**만 로컬 LLM 호출 (`Helper.chat()`)
-- **리뷰 요약**은 온디바이스가 아닌 **원격 GMS Gemini API**(`gemini-2.5-flash`)를 사용해 장점/단점/키워드 JSON으로 생성
+## Tools
 
-자세한 모델 배포 방식은 [`assets/models/README.md`](android/ChocoPick/app/src/main/assets/models/README.md) 참고.
+<div>
+  <img src="https://img.shields.io/badge/Android_Studio-3DDC84?style=for-the-badge&logo=androidstudio&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Git_LFS-F64935?style=for-the-badge&logo=git&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white"/>
+</div>
 
----
+<br/>
 
-## 📋 핵심 정책
+<div align="center">
 
-- **장바구니**는 단일 매장 기준 — 매장 변경 시 비워집니다.
-- **주문 취소 불가** — 주문 생성 이후에는 취소할 수 없습니다.
-- **STORE 주문**은 NFC 테이블 태깅(`table:{번호}`) 성공 시에만 생성됩니다.
-- **TOUT 주문**은 매장과 200m 이상 떨어진 경우 경고 후 진행합니다.
-- **픽업 예정 시각**은 기본 "현재 +30분"(테스트 모드 +30초).
-- **리뷰**는 작성자 본인만 수정/삭제 가능(서버 검증).
+🍫 **ChocoPick — Order to Offline, the sweetest way to pick up.**
 
----
-
-## 📚 문서
-
-| 문서 | 내용 |
-|------|------|
-| [기획 요약](docs/00_overview/planning-summary.md) | 서비스 개요·배경·핵심 가치 |
-| [기술 스택](docs/00_overview/tech-stack.md) | 사용 기술 정리 |
-| [요구사항 분석서](docs/01_requirements/requirements.md) | 기능(F01~F27)·비기능 요구사항, 정책 |
-| [사용자 흐름](docs/01_requirements/user-flow.md) | 주요 사용자 시나리오 |
-| [정보 구조 / 데이터 모델](docs/02_design/data-model.md) | IA, 데이터 모델 |
-| [API 명세](docs/03_api/api-spec.md) | REST API 초안 |
-| [의사결정 기록](docs/04_meeting/decisions.md) | 주요 결정 사항 |
-
----
-
-## 👥 팀
-
-**SSAFY** 자율 프로젝트 — `com.ssafy.chocopick`
-
----
-
-<sub>🍫 ChocoPick — Order to Offline, the sweetest way to pick up.</sub>
+</div>
